@@ -1,0 +1,5 @@
+package app.agrirent.hub;
+
+import com.getcapacitor.BridgeActivity;
+
+public class MainActivity extends BridgeActivity {}

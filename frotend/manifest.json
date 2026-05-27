@@ -1,0 +1,7 @@
+{
+  "name": "AgriRent - 50 Screen Generator",
+  "id": "agrirent-screen-generator",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"]
+}

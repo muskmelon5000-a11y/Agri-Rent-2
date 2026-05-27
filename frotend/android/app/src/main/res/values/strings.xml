@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Agri-Rent</string>
+    <string name="title_activity_main">Agri-Rent</string>
+    <string name="package_name">app.agrirent.hub</string>
+    <string name="custom_url_scheme">app.agrirent.hub</string>
+</resources>
