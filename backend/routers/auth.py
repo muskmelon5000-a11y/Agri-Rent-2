@@ -65,11 +65,11 @@ def verify_otp(payload: schemas.VerifyOTPRequest, db: Session = Depends(get_db))
     if user.otp_code != payload.otp:
         raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
 
-    # First login — set role and name
+    # Update name and role on every login based on their selection
     is_new_user = user.name is None
     if payload.name:
         user.name = payload.name
-    if is_new_user and payload.role:
+    if payload.role:
         user.role = payload.role
 
     # Clear OTP
