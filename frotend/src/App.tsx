@@ -139,7 +139,6 @@ export function App() {
           <Route path="/feedback" element={<FeedbackRating />} />
         </Routes>
       </PhoneFrame>
-      <ScreenIndex />
       </AuthProvider>
     </BrowserRouter>);
 
