@@ -41,6 +41,7 @@ class User(Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     profile_image = Column(String(255), nullable=True)
+    hashed_password = Column(String(255), nullable=True)
     skill_points = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from auth_utils import create_access_token
+from auth_utils import create_access_token, get_password_hash, verify_password
 from dependencies import get_current_user
 import models
 import schemas
@@ -43,9 +43,9 @@ def send_otp(payload: schemas.SendOTPRequest, db: Session = Depends(get_db)):
     return response
 
 
-@router.post("/verify-otp", response_model=schemas.TokenResponse)
-def verify_otp(payload: schemas.VerifyOTPRequest, db: Session = Depends(get_db)):
-    """Verify OTP and return JWT token."""
+@router.post("/signup", response_model=schemas.TokenResponse)
+def signup(payload: schemas.SignupRequest, db: Session = Depends(get_db)):
+    """Verify OTP, set password, and return JWT token."""
     user = db.query(models.User).filter(models.User.phone == payload.phone).first()
 
     if not user:
@@ -65,12 +65,10 @@ def verify_otp(payload: schemas.VerifyOTPRequest, db: Session = Depends(get_db))
     if user.otp_code != payload.otp:
         raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
 
-    # Update name and role on every login based on their selection
-    is_new_user = user.name is None
-    if payload.name:
-        user.name = payload.name
-    if payload.role:
-        user.role = payload.role
+    # Update user details
+    user.name = payload.name
+    user.role = payload.role
+    user.hashed_password = get_password_hash(payload.password)
 
     # Clear OTP
     user.otp_code = None
@@ -85,7 +83,29 @@ def verify_otp(payload: schemas.VerifyOTPRequest, db: Session = Depends(get_db))
         user_id=user.id,
         role=user.role,
         name=user.name,
-        is_new_user=is_new_user,
+        is_new_user=True,
+    )
+
+
+@router.post("/login", response_model=schemas.TokenResponse)
+def login(payload: schemas.LoginRequest, db: Session = Depends(get_db)):
+    """Login with phone and password."""
+    user = db.query(models.User).filter(models.User.phone == payload.phone).first()
+    
+    if not user or not user.hashed_password:
+        raise HTTPException(status_code=401, detail="Invalid phone number or password.")
+        
+    if not verify_password(payload.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid phone number or password.")
+
+    token = create_access_token({"sub": str(user.id), "role": user.role})
+    
+    return schemas.TokenResponse(
+        access_token=token,
+        user_id=user.id,
+        role=user.role,
+        name=user.name,
+        is_new_user=False,
     )
 
 

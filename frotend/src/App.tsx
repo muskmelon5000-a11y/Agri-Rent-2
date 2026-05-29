@@ -4,9 +4,7 @@ import { PhoneFrame } from './components/shared/PhoneFrame';
 import { ScreenIndex } from './components/shared/ScreenIndex';
 // Auth
 import { SplashScreen } from './pages/auth/SplashScreen';
-import { RoleSelection } from './pages/auth/RoleSelection';
-import { PhoneLogin } from './pages/auth/PhoneLogin';
-import { OTPVerification } from './pages/auth/OTPVerification';
+import { AuthPage } from './pages/auth/AuthPage';
 // Seeker Discovery
 import { SeekerHome } from './pages/seeker/discovery/SeekerHome';
 import { CategoryListing } from './pages/seeker/discovery/CategoryListing';
@@ -68,9 +66,7 @@ export function App() {
 
           {/* Auth */}
           <Route path="/splash" element={<SplashScreen />} />
-          <Route path="/role" element={<RoleSelection />} />
-          <Route path="/login" element={<PhoneLogin />} />
-          <Route path="/otp" element={<OTPVerification />} />
+          <Route path="/login" element={<AuthPage />} />
 
           {/* Seeker Discovery */}
           <Route path="/seeker/home" element={<SeekerHome />} />

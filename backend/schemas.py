@@ -17,6 +17,42 @@ class SendOTPRequest(BaseModel):
         return v
 
 
+class SignupRequest(BaseModel):
+    phone: str
+    name: str
+    password: str
+    role: str = "seeker"
+    otp: str
+
+    @field_validator("phone")
+    @classmethod
+    def validate_phone(cls, v):
+        v = v.strip().replace(" ", "")
+        if not v.isdigit() or len(v) != 10:
+            raise ValueError("Phone must be a 10-digit number")
+        return v
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v):
+        if len(v) < 6:
+            raise ValueError("Password must be at least 6 characters")
+        return v
+
+
+class LoginRequest(BaseModel):
+    phone: str
+    password: str
+
+    @field_validator("phone")
+    @classmethod
+    def validate_phone(cls, v):
+        v = v.strip().replace(" ", "")
+        if not v.isdigit() or len(v) != 10:
+            raise ValueError("Phone must be a 10-digit number")
+        return v
+
+
 class VerifyOTPRequest(BaseModel):
     phone: str
     otp: str

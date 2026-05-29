@@ -24,8 +24,16 @@ export const authService = {
     return data;
   },
 
-  async verifyOTP(phone: string, otp: string, role?: string, name?: string): Promise<AuthUser> {
-    const { data } = await api.post('/auth/verify-otp', { phone, otp, role, name });
+  async signup(phone: string, otp: string, password: string, name: string, role: string): Promise<AuthUser> {
+    const { data } = await api.post('/auth/signup', { phone, otp, password, name, role });
+    // Persist token + user
+    localStorage.setItem('agrirent_token', data.access_token);
+    localStorage.setItem('agrirent_user', JSON.stringify(data));
+    return data;
+  },
+
+  async login(phone: string, password: string): Promise<AuthUser> {
+    const { data } = await api.post('/auth/login', { phone, password });
     // Persist token + user
     localStorage.setItem('agrirent_token', data.access_token);
     localStorage.setItem('agrirent_user', JSON.stringify(data));
