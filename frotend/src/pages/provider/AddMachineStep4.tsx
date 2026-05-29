@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AppHeader } from '../../components/shared/AppHeader';
 import { Button } from '../../components/shared/Button';
@@ -7,6 +7,39 @@ import { Card } from '../../components/shared/Card';
 import { MapPinIcon, Loader2Icon } from 'lucide-react';
 import { equipmentService, EquipmentCreate } from '../../services/equipmentService';
 import { useAuth } from '../../context/AuthContext';
+import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+const DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+L.Marker.prototype.options.icon = DefaultIcon;
+
+function LocationPicker({ position, setPosition }: { position: any, setPosition: any }) {
+  const map = useMap();
+  
+  useMapEvents({
+    click(e) {
+      setPosition((prev: any) => ({ ...prev, lat: e.latlng.lat, lng: e.latlng.lng, status: 'success' }));
+    },
+  });
+
+  useEffect(() => {
+    if (position.status === 'success') {
+      map.flyTo([position.lat, position.lng], map.getZoom(), { animate: true, duration: 1 });
+    }
+  }, [position.lat, position.lng, map]);
+
+  return position.status === 'success' ? (
+    <Marker position={[position.lat, position.lng]} />
+  ) : null;
+}
 
 export function AddMachineStep4() {
   const navigate = useNavigate();
@@ -86,27 +119,24 @@ export function AddMachineStep4() {
           <h2 className="text-lg font-bold text-gray-900 mb-3">
             Equipment Location
           </h2>
-          <div className="h-40 bg-gradient-to-br from-green-50 to-amber-50 rounded-2xl relative overflow-hidden border border-gray-200 mb-3">
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 400 200"
-              preserveAspectRatio="xMidYMid slice">
-              
-              <path
-                d="M 0 100 Q 200 50 400 100"
-                stroke="#D1D5DB"
-                strokeWidth="6"
-                fill="none" />
-              
-              <g transform="translate(200, 100)">
-                <circle cx="0" cy="0" r="30" fill={locationState.status === 'success' ? '#2E7D32' : '#9CA3AF'} opacity="0.2" />
-                <path
-                  d="M 0 0 L -10 -20 A 10 10 0 1 1 10 -20 Z"
-                  fill={locationState.status === 'success' ? '#2E7D32' : '#9CA3AF'} />
-                
-                <circle cx="0" cy="-20" r="4" fill="white" />
-              </g>
-            </svg>
+          <div className="h-64 bg-gray-100 rounded-2xl relative overflow-hidden border border-gray-200 mb-3 z-0">
+            <MapContainer 
+              center={[locationState.lat, locationState.lng]} 
+              zoom={12} 
+              style={{ height: '100%', width: '100%' }}
+              zoomControl={false}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <LocationPicker position={locationState} setPosition={setLocationState} />
+            </MapContainer>
+            {locationState.status !== 'success' && (
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-white/90 px-3 py-1.5 rounded-full shadow-md text-xs font-bold text-gray-700 z-[1000] pointer-events-none whitespace-nowrap">
+                Tap on the map to drop a pin
+              </div>
+            )}
           </div>
           <Button 
             variant="outline" 
