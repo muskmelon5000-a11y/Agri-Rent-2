@@ -21,7 +21,7 @@ export function SplashScreen() {
   };
 
   return (
-    <div className="h-full bg-gradient-to-br from-primary to-primary-700 flex flex-col items-center px-6 pb-12 pt-20">
+    <div className="min-h-[100dvh] bg-gradient-to-br from-primary to-primary-700 flex flex-col items-center px-6 pb-12 pt-20">
       
       {/* Top Spacer */}
       <div className="flex-1 flex flex-col items-center justify-center w-full">
