@@ -41,6 +41,15 @@ function MapMoveListener({ onMoveEnd }: { onMoveEnd: (center: any) => void }) {
   return null;
 }
 
+// Component to programmatically fly to a new location when GPS updates
+function MapUpdater({ center }: { center: { lat: number, lng: number } }) {
+  const map = useMap();
+  useEffect(() => {
+    map.flyTo([center.lat, center.lng], map.getZoom(), { animate: true });
+  }, [center.lat, center.lng, map]);
+  return null;
+}
+
 export function SearchResultsMap() {
   const [activePin, setActivePin] = useState<number | null>(null);
   const [machines, setMachines] = useState<Equipment[]>([]);
@@ -48,8 +57,7 @@ export function SearchResultsMap() {
   const [searchCenter, setSearchCenter] = useState({ lat: 23.0225, lng: 72.5714 });
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // Get user GPS location if available
+  const requestLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -57,9 +65,16 @@ export function SearchResultsMap() {
           setMapCenter(loc);
           setSearchCenter(loc);
         },
-        (err) => console.log("GPS denied, using default location")
+        (err) => {
+          console.log("GPS denied, using default location");
+          alert("Could not get your location. Please check browser permissions.");
+        }
       );
     }
+  };
+
+  useEffect(() => {
+    requestLocation();
   }, []);
 
   const loadNearby = async (center: { lat: number, lng: number }) => {
@@ -116,6 +131,7 @@ export function SearchResultsMap() {
           />
           
           <MapMoveListener onMoveEnd={setMapCenter} />
+          <MapUpdater center={searchCenter} />
 
           {/* User Location Marker */}
           <Circle 
@@ -154,6 +170,14 @@ export function SearchResultsMap() {
             {isLoading ? "Searching..." : "Search this area"}
           </button>
         )}
+
+        {/* Locate Me Button */}
+        <button
+          onClick={requestLocation}
+          className="absolute bottom-60 right-4 bg-white p-3 rounded-full shadow-lg border border-gray-200 z-[1000] text-primary"
+        >
+          <MapPinIcon className="w-6 h-6" />
+        </button>
       </div>
 
       {/* Bottom Sheet for Results */}
