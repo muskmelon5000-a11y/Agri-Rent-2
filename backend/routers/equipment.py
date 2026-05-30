@@ -46,6 +46,7 @@ def enrich(eq: models.Equipment, distance_km: Optional[float] = None) -> dict:
         "total_rentals": eq.total_rentals,
         "distance_km": round(distance_km, 2) if distance_km is not None else None,
         "owner_name": eq.owner.name if eq.owner else None,
+        "owner_phone": eq.owner.phone if eq.owner else None,
     }
     return data
 

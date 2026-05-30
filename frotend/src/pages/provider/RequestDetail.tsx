@@ -4,7 +4,7 @@ import { AppHeader } from '../../components/shared/AppHeader';
 import { Button } from '../../components/shared/Button';
 import { Card } from '../../components/shared/Card';
 import { Avatar } from '../../components/shared/Avatar';
-import { CalendarIcon, MapPinIcon, Loader2Icon } from 'lucide-react';
+import { CalendarIcon, MapPinIcon, Loader2Icon, PhoneIcon, MessageCircleIcon } from 'lucide-react';
 import { bookingService, Booking } from '../../services/bookingService';
 
 export function RequestDetail() {
@@ -79,11 +79,41 @@ export function RequestDetail() {
 
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* Seeker Info */}
-        <Card className="p-4 flex items-center gap-4">
-          <Avatar name={booking.seeker_name || "Farmer"} size="lg" verified />
-          <div>
-            <h2 className="text-lg font-bold text-gray-900">{booking.seeker_name || "Farmer"}</h2>
-            <p className="text-sm text-gray-600">Verified Farmer • 4.8 ⭐</p>
+        <Card className="p-4">
+          <div className="flex items-center gap-4 mb-4">
+            <Avatar name={booking.seeker_name || "Farmer"} size="lg" verified />
+            <div>
+              <h2 className="text-lg font-bold text-gray-900">{booking.seeker_name || "Farmer"}</h2>
+              <p className="text-sm text-gray-600">Verified Farmer • 4.8 ⭐</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <Button
+              className="flex-1 flex items-center justify-center gap-2"
+              onClick={() => {
+                if (booking.seeker_phone) {
+                  window.location.href = `tel:+91${booking.seeker_phone}`;
+                } else {
+                  alert("Seeker's phone number is not available.");
+                }
+              }}
+            >
+              <PhoneIcon className="w-4 h-4" /> Call
+            </Button>
+            <Button
+              className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20BD5A] text-white border-none"
+              onClick={() => {
+                if (booking.seeker_phone) {
+                  const url = `https://wa.me/91${booking.seeker_phone}?text=${encodeURIComponent(`Hi ${booking.seeker_name}, regarding your Agri-Rent booking request...`)}`;
+                  window.open(url, '_blank');
+                } else {
+                  alert("Seeker's phone number is not available.");
+                }
+              }}
+            >
+              <MessageCircleIcon className="w-4 h-4" /> Chat
+            </Button>
           </div>
         </Card>
 

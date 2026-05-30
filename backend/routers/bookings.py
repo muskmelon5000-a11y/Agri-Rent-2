@@ -31,6 +31,7 @@ def enrich_booking(b: models.Booking) -> dict:
         "equipment_name": eq.name if eq else None,
         "equipment_image": images[0] if images else None,
         "seeker_name": b.seeker.name if b.seeker else None,
+        "seeker_phone": b.seeker.phone if b.seeker else None,
         "owner_name": eq.owner.name if eq and eq.owner else None,
         "owner_phone": eq.owner.phone if eq and eq.owner else None,
         "equipment_price_per_day": eq.price_per_day if eq else None,

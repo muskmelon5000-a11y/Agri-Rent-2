@@ -24,6 +24,7 @@ export interface Equipment {
   total_rentals: number;
   distance_km?: number;
   owner_name?: string;
+  owner_phone?: string;
 }
 
 export interface NearbyParams {

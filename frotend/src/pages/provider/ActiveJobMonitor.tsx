@@ -79,10 +79,30 @@ export function ActiveJobMonitor() {
             </div>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="flex-1">
+            <Button
+              variant="outline"
+              className="flex-1 flex items-center justify-center gap-2"
+              onClick={() => {
+                if (booking.seeker_phone) {
+                  window.location.href = `tel:+91${booking.seeker_phone}`;
+                } else {
+                  alert("Seeker's phone number is not available.");
+                }
+              }}
+            >
               <PhoneIcon className="w-4 h-4" /> Call
             </Button>
-            <Button variant="outline" className="flex-1">
+            <Button
+              className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20BD5A] text-white border-none"
+              onClick={() => {
+                if (booking.seeker_phone) {
+                  const url = `https://wa.me/91${booking.seeker_phone}?text=${encodeURIComponent(`Hi ${booking.seeker_name}, regarding your Agri-Rent booking for ${booking.equipment_name}...`)}`;
+                  window.open(url, '_blank');
+                } else {
+                  alert("Seeker's phone number is not available.");
+                }
+              }}
+            >
               <MessageCircleIcon className="w-4 h-4" /> Chat
             </Button>
           </div>

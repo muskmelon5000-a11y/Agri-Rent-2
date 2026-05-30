@@ -17,6 +17,7 @@ export interface Booking {
   equipment_name?: string;
   equipment_image?: string;
   seeker_name?: string;
+  seeker_phone?: string;
   owner_name?: string;
   owner_phone?: string;
   equipment_price_per_day?: number;

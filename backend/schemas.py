@@ -168,6 +168,7 @@ class EquipmentOut(EquipmentBase):
     created_at: Optional[datetime] = None
     distance_km: Optional[float] = None       # populated in nearby queries
     owner_name: Optional[str] = None
+    owner_phone: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -210,6 +211,7 @@ class BookingOut(BaseModel):
     equipment_name: Optional[str] = None
     equipment_image: Optional[str] = None
     seeker_name: Optional[str] = None
+    seeker_phone: Optional[str] = None
     owner_name: Optional[str] = None
     owner_phone: Optional[str] = None
 

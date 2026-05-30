@@ -14,17 +14,24 @@ export function DirectConnect() {
   const navigate = useNavigate();
   const location = useLocation();
   const ownerName = location.state?.ownerName || "Owner";
-  const ownerPhone = location.state?.ownerPhone || "9876543210";
+  const ownerPhone = location.state?.ownerPhone || "";
   const equipmentName = location.state?.equipmentName || "Equipment";
 
   const handleCall = () => {
-    window.location.href = `tel:+91${ownerPhone}`;
+    if (ownerPhone) {
+      window.location.href = `tel:+91${ownerPhone}`;
+    } else {
+      alert("Phone number not available for this owner.");
+    }
   };
 
   const handleWhatsApp = () => {
-    // WhatsApp deep link format
-    const url = `https://wa.me/91${ownerPhone}?text=${encodeURIComponent(`Hi ${ownerName}, I have booked your ${equipmentName} on Agri-Rent Hub.`)}`;
-    window.open(url, '_blank');
+    if (ownerPhone) {
+      const url = `https://wa.me/91${ownerPhone}?text=${encodeURIComponent(`Hi ${ownerName}, I have booked your ${equipmentName} on Agri-Rent Hub.`)}`;
+      window.open(url, '_blank');
+    } else {
+      alert("Phone number not available for this owner.");
+    }
   };
   return (
     <div className="h-full bg-background flex flex-col">
