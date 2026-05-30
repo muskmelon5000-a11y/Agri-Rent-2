@@ -114,19 +114,18 @@ export function AvailabilityCalendar() {
         </div>
 
         {/* Calendar Grid */}
-        <div className="bg-surface rounded-3xl p-4 shadow-sm border border-gray-100 mb-6">
-          <div className="grid grid-cols-7 gap-2 mb-4">
+        <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 mb-6">
+          <div className="grid grid-cols-7 gap-y-4 gap-x-1 mb-4">
             {days.map((day) =>
             <div
               key={day}
-              className="text-center text-sm font-semibold text-gray-500">
-              
+              className="text-center text-xs font-bold text-gray-400 uppercase tracking-wider">
                 {day}
               </div>
             )}
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-y-2 gap-x-1">
             {/* Empty slots for offset */}
             {Array.from({ length: firstDayOfMonth }).map((_, i) => (
               <div key={`empty-${i}`} />
@@ -140,21 +139,22 @@ export function AvailabilityCalendar() {
               const isPast = dateObj < today;
               const isSelected = selectedDates.includes(dateStr);
               
-              let bgClass = 'bg-gray-50 hover:bg-gray-100 text-gray-900';
+              let bgClass = 'bg-transparent hover:bg-gray-50 text-gray-700';
               if (isPast) {
-                bgClass = 'bg-gray-50 text-gray-300 cursor-not-allowed';
+                bgClass = 'bg-transparent text-gray-300 cursor-not-allowed opacity-50';
               } else if (isSelected) {
-                bgClass = 'bg-primary text-white shadow-md hover:bg-primary/90';
+                bgClass = 'bg-primary text-white shadow-lg shadow-primary/30 font-bold scale-105';
               }
 
               return (
-                <button
-                  key={day}
-                  onClick={() => !isPast && toggleDate(dateStr)}
-                  disabled={isPast}
-                  className={`aspect-square rounded-full flex items-center justify-center text-sm font-semibold transition-all ${bgClass}`}>
-                  {day}
-                </button>
+                <div key={day} className="flex justify-center">
+                  <button
+                    onClick={() => !isPast && toggleDate(dateStr)}
+                    disabled={isPast}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-[15px] transition-all duration-200 ${bgClass}`}>
+                    {day}
+                  </button>
+                </div>
               );
             })}
           </div>
