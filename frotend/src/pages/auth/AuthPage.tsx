@@ -12,6 +12,8 @@ export function AuthPage() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [village, setVillage] = useState('');
+  const [district, setDistrict] = useState('');
   const [role, setRole] = useState<'seeker' | 'provider'>('seeker');
   
   // OTP State
@@ -66,7 +68,7 @@ export function AuthPage() {
     setError('');
     setIsLoading(true);
     try {
-      const user = await authService.signup(phone, otp, password, name, role);
+      const user = await authService.signup(phone, otp, password, name, role, village, district);
       login(user);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Invalid OTP');
@@ -212,6 +214,31 @@ export function AuthPage() {
                     onChange={(e) => setPhone(e.target.value)}
                     className="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-gray-300 rounded-lg p-3 border outline-none transition-all"
                     placeholder="10 digit number"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Village/Town</label>
+                  <input
+                    type="text"
+                    required
+                    value={village}
+                    onChange={(e) => setVillage(e.target.value)}
+                    className="mt-1 focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-lg p-3 border outline-none transition-all"
+                    placeholder="Village Name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">District</label>
+                  <input
+                    type="text"
+                    required
+                    value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
+                    className="mt-1 focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-lg p-3 border outline-none transition-all"
+                    placeholder="District Name"
                   />
                 </div>
               </div>

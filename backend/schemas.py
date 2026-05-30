@@ -23,6 +23,8 @@ class SignupRequest(BaseModel):
     password: str
     role: str = "seeker"
     otp: str
+    village: Optional[str] = None
+    district: Optional[str] = None
 
     @field_validator("phone")
     @classmethod

@@ -24,8 +24,8 @@ export const authService = {
     return data;
   },
 
-  async signup(phone: string, otp: string, password: string, name: string, role: string): Promise<AuthUser> {
-    const { data } = await api.post('/auth/signup', { phone, otp, password, name, role });
+  async signup(phone: string, otp: string, password: string, name: string, role: string, village?: string, district?: string): Promise<AuthUser> {
+    const { data } = await api.post('/auth/signup', { phone, otp, password, name, role, village, district });
     // Persist token immediately so getMe works
     localStorage.setItem('agrirent_token', data.access_token);
     

@@ -69,6 +69,8 @@ def signup(payload: schemas.SignupRequest, db: Session = Depends(get_db)):
     user.name = payload.name
     user.role = payload.role
     user.hashed_password = get_password_hash(payload.password)
+    user.village = payload.village
+    user.district = payload.district
 
     # Clear OTP
     user.otp_code = None
