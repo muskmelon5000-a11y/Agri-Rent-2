@@ -7,7 +7,13 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 export function AvailabilityCalendar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedDates, setSelectedDates] = useState<number[]>([15, 16, 17]);
+  
+  // Real date logic
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const [currentMonth, setCurrentMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+  const [selectedDates, setSelectedDates] = useState<string[]>([]);
   
   // Get machine details from state or use defaults
   const machine = location.state?.machine;
@@ -17,36 +23,43 @@ export function AvailabilityCalendar() {
   const image = machine?.images?.[0] || "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200";
 
   const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-  const dates = Array.from(
-    {
-      length: 31
-    },
-    (_, i) => i + 1
-  );
-  const bookedDates = [5, 6, 7, 22, 23];
-  const partialDates = [8, 21];
+  
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = new Date(year, month, 1).getDay();
 
-  const toggleDate = (date: number) => {
-    if (bookedDates.includes(date)) return;
-    if (selectedDates.includes(date)) {
-      setSelectedDates(selectedDates.filter((d) => d !== date));
+  const prevMonth = () => {
+    setCurrentMonth(new Date(year, month - 1, 1));
+  };
+  
+  const nextMonth = () => {
+    setCurrentMonth(new Date(year, month + 1, 1));
+  };
+
+  const isPastMonth = year < today.getFullYear() || (year === today.getFullYear() && month <= today.getMonth());
+
+  // Convert date to YYYY-MM-DD
+  const formatDate = (y: number, m: number, d: number) => {
+    return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  };
+
+  const toggleDate = (dateStr: string) => {
+    if (selectedDates.includes(dateStr)) {
+      setSelectedDates(selectedDates.filter((d) => d !== dateStr));
     } else {
-      setSelectedDates([...selectedDates, date].sort((a, b) => a - b));
+      setSelectedDates([...selectedDates, dateStr].sort());
     }
   };
 
   const handleContinue = () => {
-    // For demo, we assume the month is October 2023
-    const year = 2023;
-    const month = 10;
+    if (selectedDates.length === 0) return;
     
     // Sort selected dates to find start and end
-    const sorted = [...selectedDates].sort((a, b) => a - b);
-    const startDay = sorted[0];
-    const endDay = sorted[sorted.length - 1];
-    
-    const startDate = `${year}-${String(month).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
-    const endDate = `${year}-${String(month).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+    const sorted = [...selectedDates].sort();
+    const startDate = sorted[0];
+    const endDate = sorted[sorted.length - 1];
 
     navigate('/seeker/request', {
       state: {
@@ -61,6 +74,8 @@ export function AvailabilityCalendar() {
       }
     });
   };
+
+  const monthName = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
   return (
     <div className="h-full bg-background flex flex-col">
@@ -82,11 +97,18 @@ export function AvailabilityCalendar() {
 
         {/* Calendar Header */}
         <div className="flex items-center justify-between mb-6">
-          <button className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center">
+          <button 
+            onClick={prevMonth}
+            disabled={isPastMonth}
+            className={`w-10 h-10 rounded-full flex items-center justify-center ${isPastMonth ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+          >
             <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
           </button>
-          <h2 className="text-lg font-bold text-gray-900">October 2023</h2>
-          <button className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center">
+          <h2 className="text-lg font-bold text-gray-900">{monthName}</h2>
+          <button 
+            onClick={nextMonth}
+            className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center"
+          >
             <ChevronRightIcon className="w-5 h-5 text-gray-600" />
           </button>
         </div>
@@ -106,30 +128,34 @@ export function AvailabilityCalendar() {
 
           <div className="grid grid-cols-7 gap-2">
             {/* Empty slots for offset */}
-            <div />
-            <div />
-            <div />
+            {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+              <div key={`empty-${i}`} />
+            ))}
 
-            {dates.map((date) => {
-              const isBooked = bookedDates.includes(date);
-              const isPartial = partialDates.includes(date);
-              const isSelected = selectedDates.includes(date);
+            {Array.from({ length: daysInMonth }).map((_, i) => {
+              const day = i + 1;
+              const dateObj = new Date(year, month, day);
+              const dateStr = formatDate(year, month, day);
+              
+              const isPast = dateObj < today;
+              const isSelected = selectedDates.includes(dateStr);
+              
               let bgClass = 'bg-gray-50 hover:bg-gray-100 text-gray-900';
-              if (isBooked)
-              bgClass = 'bg-gray-100 text-gray-400 cursor-not-allowed';
-              if (isPartial)
-              bgClass = 'bg-amber-50 text-amber-700 border border-amber-200';
-              if (isSelected) bgClass = 'bg-primary text-white shadow-md';
+              if (isPast) {
+                bgClass = 'bg-gray-50 text-gray-300 cursor-not-allowed';
+              } else if (isSelected) {
+                bgClass = 'bg-primary text-white shadow-md hover:bg-primary/90';
+              }
+
               return (
                 <button
-                  key={date}
-                  onClick={() => toggleDate(date)}
-                  disabled={isBooked}
+                  key={day}
+                  onClick={() => !isPast && toggleDate(dateStr)}
+                  disabled={isPast}
                   className={`aspect-square rounded-full flex items-center justify-center text-sm font-semibold transition-all ${bgClass}`}>
-                  
-                  {date}
-                </button>);
-
+                  {day}
+                </button>
+              );
             })}
           </div>
         </div>
@@ -143,14 +169,6 @@ export function AvailabilityCalendar() {
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-primary" />
             <span className="text-sm text-gray-600">Selected</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-amber-100 border border-amber-200" />
-            <span className="text-sm text-gray-600">Partial</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-gray-200" />
-            <span className="text-sm text-gray-600">Booked</span>
           </div>
         </div>
       </div>
@@ -170,9 +188,9 @@ export function AvailabilityCalendar() {
           size="lg"
           disabled={selectedDates.length === 0}
           onClick={handleContinue}>
-          
           Continue to Request
         </Button>
       </div>
-    </div>);
+    </div>
+  );
 }
