@@ -71,7 +71,7 @@ export function BottomNav({ role = 'seeker' }: BottomNavProps) {
   const location = useLocation();
   const navItems = role === 'seeker' ? seekerNav : providerNav;
   return (
-    <div className="bg-surface border-t border-gray-200 px-2 py-2 flex items-center justify-around sticky bottom-0 z-40">
+    <div className="bg-surface border-t border-gray-200 px-2 py-2 flex items-center justify-around fixed bottom-0 left-0 w-full z-40">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive =
