@@ -16,7 +16,7 @@ export function SplashScreen() {
         navigate('/seeker/home');
       }
     } else {
-      navigate('/role');
+      navigate('/login');
     }
   };
 
