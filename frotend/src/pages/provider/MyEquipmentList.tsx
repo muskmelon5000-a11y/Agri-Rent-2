@@ -104,10 +104,10 @@ export function MyEquipmentList() {
                   Currently Rented Out
                 </span>
                 <Link
-              to="/provider/active-job"
+              to="/provider/requests"
               className="text-xs font-bold text-amber-800 underline">
               
-                  View Job
+                  View Jobs
                 </Link>
               </div>
           }
