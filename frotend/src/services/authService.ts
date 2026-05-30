@@ -26,18 +26,28 @@ export const authService = {
 
   async signup(phone: string, otp: string, password: string, name: string, role: string): Promise<AuthUser> {
     const { data } = await api.post('/auth/signup', { phone, otp, password, name, role });
-    // Persist token + user
+    // Persist token immediately so getMe works
     localStorage.setItem('agrirent_token', data.access_token);
-    localStorage.setItem('agrirent_user', JSON.stringify(data));
-    return data;
+    
+    // Fetch full user profile
+    const { data: fullUser } = await api.get('/auth/me');
+    const userWithToken = { ...fullUser, access_token: data.access_token };
+    
+    localStorage.setItem('agrirent_user', JSON.stringify(userWithToken));
+    return userWithToken;
   },
 
   async login(phone: string, password: string): Promise<AuthUser> {
     const { data } = await api.post('/auth/login', { phone, password });
-    // Persist token + user
+    // Persist token immediately so getMe works
     localStorage.setItem('agrirent_token', data.access_token);
-    localStorage.setItem('agrirent_user', JSON.stringify(data));
-    return data;
+    
+    // Fetch full user profile
+    const { data: fullUser } = await api.get('/auth/me');
+    const userWithToken = { ...fullUser, access_token: data.access_token };
+    
+    localStorage.setItem('agrirent_user', JSON.stringify(userWithToken));
+    return userWithToken;
   },
 
   logout() {
