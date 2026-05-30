@@ -1,10 +1,14 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AppHeader } from '../../components/shared/AppHeader';
 import { Button } from '../../components/shared/Button';
 import { LogOutIcon } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 export function LogoutScreen() {
+  const { logout } = useAuth();
   const navigate = useNavigate();
+  
   return (
     <div className="h-full bg-background flex flex-col">
       <AppHeader title="Log Out" showBack />
@@ -26,7 +30,7 @@ export function LogoutScreen() {
             fullWidth
             size="lg"
             className="bg-red-600 hover:bg-red-700 active:bg-red-800"
-            onClick={() => navigate('/splash')}>
+            onClick={() => logout()}>
             
             Yes, Log Out
           </Button>
