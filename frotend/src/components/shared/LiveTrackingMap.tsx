@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import React from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -20,30 +20,8 @@ interface LiveTrackingMapProps {
 }
 
 export function LiveTrackingMap({ initialLat, initialLng, equipmentName = "Equipment" }: LiveTrackingMapProps) {
-  // We simulate live movement by updating the marker coordinate slightly every 2 seconds
-  const [currentPos, setCurrentPos] = useState<{lat: number, lng: number}>({ lat: initialLat, lng: initialLng });
-  const [path, setPath] = useState<[number, number][]>([[initialLat, initialLng]]);
-
-  useEffect(() => {
-    // Simulated movement parameters (plowing a field pattern or simple movement)
-    let step = 0;
-    const intervalId = setInterval(() => {
-      setCurrentPos(prev => {
-        // Move slightly right and up
-        const latOffset = Math.sin(step * 0.5) * 0.0001; 
-        const lngOffset = Math.cos(step * 0.5) * 0.0001 + 0.00005;
-        
-        const newLat = prev.lat + latOffset;
-        const newLng = prev.lng + lngOffset;
-        
-        setPath(p => [...p, [newLat, newLng]]);
-        return { lat: newLat, lng: newLng };
-      });
-      step += 1;
-    }, 2000); // update every 2 seconds
-
-    return () => clearInterval(intervalId);
-  }, []);
+  // Fixed position for the marker
+  const currentPos = { lat: initialLat, lng: initialLng };
 
   return (
     <div className="relative w-full h-full">
@@ -60,7 +38,7 @@ export function LiveTrackingMap({ initialLat, initialLng, equipmentName = "Equip
         />
         
         {/* The trail of where it has been */}
-        <Polyline positions={path} color="#ef4444" weight={4} opacity={0.6} dashArray="5, 10" />
+        {/* Removed simulated path */}
 
         {/* The current position marker */}
         <Marker position={[currentPos.lat, currentPos.lng]} icon={equipmentLiveIcon}>
