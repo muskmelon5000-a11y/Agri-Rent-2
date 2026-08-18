@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://a578b2c9ed1701.lhr.life',
+  baseURL: import.meta.env.VITE_API_URL || 'https://agrirent-backend-v5xi.onrender.com',
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 });
