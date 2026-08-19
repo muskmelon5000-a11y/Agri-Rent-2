@@ -6,32 +6,33 @@ from datetime import datetime
 # ─── Auth ────────────────────────────────────────────────────────────────────
 
 class SendOTPRequest(BaseModel):
-    phone: str
+    email: str
 
-    @field_validator("phone")
+    @field_validator("email")
     @classmethod
-    def validate_phone(cls, v):
-        v = v.strip().replace(" ", "")
-        if not v.isdigit() or len(v) != 10:
-            raise ValueError("Phone must be a 10-digit number")
+    def validate_email(cls, v):
+        v = v.strip().lower()
+        if "@" not in v:
+            raise ValueError("Must be a valid email address")
         return v
 
 
 class SignupRequest(BaseModel):
-    phone: str
+    email: str
     name: str
     password: str
     role: str = "seeker"
     otp: str
     village: Optional[str] = None
     district: Optional[str] = None
+    phone: Optional[str] = None
 
-    @field_validator("phone")
+    @field_validator("email")
     @classmethod
-    def validate_phone(cls, v):
-        v = v.strip().replace(" ", "")
-        if not v.isdigit() or len(v) != 10:
-            raise ValueError("Phone must be a 10-digit number")
+    def validate_email(cls, v):
+        v = v.strip().lower()
+        if "@" not in v:
+            raise ValueError("Must be a valid email address")
         return v
 
     @field_validator("password")
@@ -43,30 +44,30 @@ class SignupRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    phone: str
+    email: str
     password: str
 
-    @field_validator("phone")
+    @field_validator("email")
     @classmethod
-    def validate_phone(cls, v):
-        v = v.strip().replace(" ", "")
-        if not v.isdigit() or len(v) != 10:
-            raise ValueError("Phone must be a 10-digit number")
+    def validate_email(cls, v):
+        v = v.strip().lower()
+        if "@" not in v:
+            raise ValueError("Must be a valid email address")
         return v
 
 
 class VerifyOTPRequest(BaseModel):
-    phone: str
+    email: str
     otp: str
     role: Optional[str] = "seeker"   # seeker | provider
     name: Optional[str] = None
 
-    @field_validator("phone")
+    @field_validator("email")
     @classmethod
-    def validate_phone(cls, v):
-        v = v.strip().replace(" ", "")
-        if not v.isdigit() or len(v) != 10:
-            raise ValueError("Phone must be a 10-digit number")
+    def validate_email(cls, v):
+        v = v.strip().lower()
+        if "@" not in v:
+            raise ValueError("Must be a valid email address")
         return v
 
     @field_validator("otp")
@@ -108,7 +109,8 @@ class UserUpdate(UserBase):
 
 class UserOut(UserBase):
     id: str
-    phone: str
+    email: str
+    phone: Optional[str] = None
     role: str
     skill_points: int
     created_at: Optional[datetime] = None

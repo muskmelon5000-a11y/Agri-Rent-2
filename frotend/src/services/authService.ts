@@ -5,6 +5,26 @@ export interface OTPResponse {
   dev_otp?: string;  // Only in DEV_MODE
 }
 
+export interface SendOtpPayload {
+  email: string;
+}
+
+export interface SignupPayload {
+  email: string;
+  name: string;
+  password: string;
+  role: string;
+  otp: string;
+  village?: string;
+  district?: string;
+  phone?: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
 export interface AuthUser {
   access_token?: string;
   token_type?: string;
@@ -12,6 +32,7 @@ export interface AuthUser {
   role: string;
   name: string | null;
   is_new_user?: boolean;
+  email?: string;
   phone?: string;
   village?: string;
   district?: string;
@@ -19,13 +40,13 @@ export interface AuthUser {
 }
 
 export const authService = {
-  async sendOTP(phone: string): Promise<OTPResponse> {
-    const { data } = await api.post('/auth/send-otp', { phone });
+  async sendOTP(email: string): Promise<OTPResponse> {
+    const { data } = await api.post('/auth/send-otp', { email });
     return data;
   },
 
-  async signup(phone: string, otp: string, password: string, name: string, role: string, village?: string, district?: string): Promise<AuthUser> {
-    const { data } = await api.post('/auth/signup', { phone, otp, password, name, role, village, district });
+  async signup(email: string, otp: string, password: string, name: string, role: string, village?: string, district?: string, phone?: string): Promise<AuthUser> {
+    const { data } = await api.post('/auth/signup', { email, otp, password, name, role, village, district, phone });
     // Persist token immediately so getMe works
     localStorage.setItem('agrirent_token', data.access_token);
     
@@ -37,8 +58,8 @@ export const authService = {
     return userWithToken;
   },
 
-  async login(phone: string, password: string): Promise<AuthUser> {
-    const { data } = await api.post('/auth/login', { phone, password });
+  async login(email: string, password: string): Promise<AuthUser> {
+    const { data } = await api.post('/auth/login', { email, password });
     // Persist token immediately so getMe works
     localStorage.setItem('agrirent_token', data.access_token);
     
@@ -67,5 +88,5 @@ export const authService = {
   async getMe(): Promise<AuthUser> {
     const { data } = await api.get('/auth/me');
     return data;
-  },
+  }
 };

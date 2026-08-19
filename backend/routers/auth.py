@@ -18,12 +18,12 @@ def generate_otp() -> str:
 
 @router.post("/send-otp", response_model=schemas.OTPResponse)
 def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
-    """Send OTP to a phone number. In DEV_MODE the OTP is returned in the response."""
+    """Send OTP to an email. In DEV_MODE the OTP is returned in the response."""
     otp = generate_otp()
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
 
     users_ref = db.collection("users")
-    query = users_ref.where("phone", "==", payload.phone).limit(1).stream()
+    query = users_ref.where("email", "==", payload.email).limit(1).stream()
     
     user_doc = None
     for doc in query:
@@ -33,7 +33,7 @@ def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
     if not user_doc:
         # Create new user
         new_user_data = {
-            "phone": payload.phone,
+            "email": payload.email,
             "created_at": datetime.now(timezone.utc),
             "otp_code": otp,
             "otp_expires_at": expires_at,
@@ -47,8 +47,8 @@ def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
             "otp_expires_at": expires_at
         })
 
-    # In production: integrate Twilio / MSG91 here
-    response = schemas.OTPResponse(message=f"OTP sent to +91 {payload.phone}")
+    # In production: integrate SendGrid / Postmark / Mailgun here
+    response = schemas.OTPResponse(message=f"OTP sent to {payload.email}")
     if DEV_MODE:
         response.dev_otp = otp  # visible in response during development
     return response
@@ -57,7 +57,7 @@ def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
 def signup(payload: schemas.SignupRequest, db: Client = Depends(get_db)):
     """Verify OTP, set password, and return JWT token."""
     users_ref = db.collection("users")
-    query = users_ref.where("phone", "==", payload.phone).limit(1).stream()
+    query = users_ref.where("email", "==", payload.email).limit(1).stream()
     
     user_doc = None
     for doc in query:
@@ -65,12 +65,12 @@ def signup(payload: schemas.SignupRequest, db: Client = Depends(get_db)):
         break
 
     if not user_doc:
-        raise HTTPException(status_code=404, detail="Phone number not found. Send OTP first.")
+        raise HTTPException(status_code=404, detail="Email not found. Send OTP first.")
 
     user_data = user_doc.to_dict()
 
     if "otp_code" not in user_data or not user_data["otp_code"]:
-        raise HTTPException(status_code=400, detail="No OTP was sent to this number.")
+        raise HTTPException(status_code=400, detail="No OTP was sent to this email.")
 
     # Check expiry
     exp = user_data.get("otp_expires_at")
@@ -90,6 +90,7 @@ def signup(payload: schemas.SignupRequest, db: Client = Depends(get_db)):
         "hashed_password": get_password_hash(payload.password),
         "village": payload.village,
         "district": payload.district,
+        "phone": payload.phone,
         "otp_code": None,
         "otp_expires_at": None
     })
@@ -106,9 +107,9 @@ def signup(payload: schemas.SignupRequest, db: Client = Depends(get_db)):
 
 @router.post("/login", response_model=schemas.TokenResponse)
 def login(payload: schemas.LoginRequest, db: Client = Depends(get_db)):
-    """Login with phone and password."""
+    """Login with email and password."""
     users_ref = db.collection("users")
-    query = users_ref.where("phone", "==", payload.phone).limit(1).stream()
+    query = users_ref.where("email", "==", payload.email).limit(1).stream()
     
     user_doc = None
     for doc in query:
@@ -116,13 +117,13 @@ def login(payload: schemas.LoginRequest, db: Client = Depends(get_db)):
         break
     
     if not user_doc:
-        raise HTTPException(status_code=401, detail="Invalid phone number or password.")
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
         
     user_data = user_doc.to_dict()
     hashed_password = user_data.get("hashed_password")
     
     if not hashed_password or not verify_password(payload.password, hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid phone number or password.")
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
 
     role = user_data.get("role", "seeker")
     token = create_access_token({"sub": user_doc.id, "role": role})
@@ -140,6 +141,7 @@ def get_me(current_user: dict = Depends(get_current_user)):
     """Returns the currently authenticated user info."""
     return {
         "id": current_user.get("id"),
+        "email": current_user.get("email"),
         "phone": current_user.get("phone"),
         "name": current_user.get("name"),
         "role": current_user.get("role"),

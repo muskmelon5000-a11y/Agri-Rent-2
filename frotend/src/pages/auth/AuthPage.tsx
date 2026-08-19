@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
-import { LeafIcon, PhoneIcon, LockIcon, UserIcon, CheckCircleIcon, ArrowRightIcon } from 'lucide-react';
+import { LeafIcon, MailIcon, LockIcon, UserIcon, CheckCircleIcon, ArrowRightIcon, PhoneIcon } from 'lucide-react';
 import { Button } from '../../components/shared/Button';
 
 export function AuthPage() {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   
   // Form State
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -33,7 +34,7 @@ export function AuthPage() {
     setError('');
     setIsLoading(true);
     try {
-      const user = await authService.login(phone, password);
+      const user = await authService.login(email, password);
       login(user);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Invalid credentials');
@@ -44,14 +45,14 @@ export function AuthPage() {
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone || password.length < 6) {
+    if (!name || !email || password.length < 6) {
       setError("Please fill all fields (password min 6 chars)");
       return;
     }
     setError('');
     setIsLoading(true);
     try {
-      const response = await authService.sendOTP(phone);
+      const response = await authService.sendOTP(email);
       if (response.dev_otp) {
         setDevOtp(response.dev_otp);
       }
@@ -68,7 +69,7 @@ export function AuthPage() {
     setError('');
     setIsLoading(true);
     try {
-      const user = await authService.signup(phone, otp, password, name, role, village, district);
+      const user = await authService.signup(email, otp, password, name, role, village, district, phone);
       login(user);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Invalid OTP');
@@ -122,18 +123,18 @@ export function AuthPage() {
           {activeTab === 'login' && !showOTP && (
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                <label className="block text-sm font-medium text-gray-700">Email Address</label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <PhoneIcon className="h-5 w-5 text-gray-400" />
+                    <MailIcon className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    type="tel"
+                    type="email"
                     required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-gray-300 rounded-lg p-3 border outline-none transition-all"
-                    placeholder="Enter your 10 digit number"
+                    placeholder="Enter your email address"
                   />
                 </div>
               </div>
@@ -202,14 +203,30 @@ export function AuthPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                <label className="block text-sm font-medium text-gray-700">Email Address</label>
+                <div className="mt-1 relative rounded-md shadow-sm">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <MailIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-gray-300 rounded-lg p-3 border outline-none transition-all"
+                    placeholder="you@example.com"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Phone Number (Optional)</label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <PhoneIcon className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
                     type="tel"
-                    required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-gray-300 rounded-lg p-3 border outline-none transition-all"
@@ -270,9 +287,9 @@ export function AuthPage() {
           {showOTP && (
             <form onSubmit={handleVerifySignup} className="space-y-5">
               <div className="text-center mb-6">
-                <h3 className="text-lg font-bold text-gray-900">Verify your number</h3>
+                <h3 className="text-lg font-bold text-gray-900">Verify your email</h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  We sent a code to <span className="font-semibold text-gray-900">+91 {phone}</span>
+                  We sent a code to <span className="font-semibold text-gray-900">{email}</span>
                 </p>
                 {devOtp && (
                   <div className="mt-3 inline-block bg-primary-50 text-primary text-xs font-bold px-3 py-1.5 rounded-lg border border-primary-100">
@@ -305,7 +322,7 @@ export function AuthPage() {
                   onClick={() => setShowOTP(false)} 
                   className="text-sm text-primary font-medium hover:underline"
                 >
-                  Change Phone Number
+                  Change Email Address
                 </button>
               </div>
             </form>
