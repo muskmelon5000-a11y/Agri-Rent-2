@@ -1,8 +1,8 @@
 import api from './api';
 
 export interface Equipment {
-  id: number;
-  owner_id: number;
+  id: string;
+  owner_id: string;
   name: string;
   type: string;
   brand?: string;
@@ -56,7 +56,7 @@ export const equipmentService = {
     return data;
   },
 
-  async getById(id: number): Promise<Equipment> {
+  async getById(id: string): Promise<Equipment> {
     const { data } = await api.get(`/equipment/${id}`);
     return data;
   },
@@ -66,7 +66,7 @@ export const equipmentService = {
     return data;
   },
 
-  async getByOwner(ownerId: number): Promise<Equipment[]> {
+  async getByOwner(ownerId: string): Promise<Equipment[]> {
     const { data } = await api.get(`/equipment/owner/${ownerId}`);
     return data;
   },
@@ -76,17 +76,17 @@ export const equipmentService = {
     return data;
   },
 
-  async update(id: number, payload: Partial<Equipment>): Promise<Equipment> {
+  async update(id: string, payload: Partial<Equipment>): Promise<Equipment> {
     const { data } = await api.put(`/equipment/${id}`, payload);
     return data;
   },
 
-  async toggleAvailability(id: number): Promise<{ id: number; is_available: boolean }> {
+  async toggleAvailability(id: string): Promise<{ id: string; is_available: boolean }> {
     const { data } = await api.patch(`/equipment/${id}/availability`);
     return data;
   },
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await api.delete(`/equipment/${id}`);
   },
 };

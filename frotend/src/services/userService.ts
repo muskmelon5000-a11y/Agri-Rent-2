@@ -1,7 +1,7 @@
 import api from './api';
 
 export interface UserProfile {
-  id: number;
+  id: string;
   phone: string;
   name: string | null;
   role: string;
@@ -24,7 +24,7 @@ export const userService = {
     return data;
   },
   
-  async getPublicProfile(userId: number): Promise<any> {
+  async getPublicProfile(userId: string): Promise<any> {
     const { data } = await api.get(`/users/${userId}`);
     return data;
   },

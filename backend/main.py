@@ -1,11 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine, Base
+import database
 from routers import auth, equipment, bookings, users, providers
 from websocket_routes import router as ws_router
-
-# Create all DB tables on startup
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Agri-Rent API",

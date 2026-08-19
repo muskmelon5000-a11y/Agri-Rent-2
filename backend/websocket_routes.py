@@ -2,18 +2,17 @@ import json
 import asyncio
 from typing import Dict, Set
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Query
-from sqlalchemy.orm import Session
 from database import get_db
 from auth_utils import decode_token
-import models
+from google.cloud.firestore import Client
 
 router = APIRouter(tags=["WebSocket"])
 
 # booking_id -> set of connected WebSocket clients
-active_connections: Dict[int, Set[WebSocket]] = {}
+active_connections: Dict[str, Set[WebSocket]] = {}
 
 
-async def broadcast_booking_update(booking_id: int, data: dict):
+async def broadcast_booking_update(booking_id: str, data: dict):
     """Send a JSON message to all clients watching this booking."""
     if booking_id in active_connections:
         dead = set()
@@ -28,9 +27,9 @@ async def broadcast_booking_update(booking_id: int, data: dict):
 @router.websocket("/ws/bookings/{booking_id}")
 async def booking_ws(
     websocket: WebSocket,
-    booking_id: int,
+    booking_id: str,
     token: str = Query(...),
-    db: Session = Depends(get_db),
+    db: Client = Depends(get_db),
 ):
     """
     WebSocket endpoint for real-time booking status updates.
@@ -42,11 +41,12 @@ async def booking_ws(
         await websocket.close(code=4001)
         return
 
-    user_id = int(payload.get("sub", 0))
-    booking = db.query(models.Booking).filter(models.Booking.id == booking_id).first()
-    if not booking:
+    b_doc = db.collection("bookings").document(booking_id).get()
+    if not b_doc.exists:
         await websocket.close(code=4004)
         return
+
+    b_data = b_doc.to_dict()
 
     await websocket.accept()
 
@@ -59,8 +59,8 @@ async def booking_ws(
     await websocket.send_json({
         "type": "status_update",
         "booking_id": booking_id,
-        "status": booking.status,
-        "message": f"Booking is currently {booking.status}",
+        "status": b_data.get("status"),
+        "message": f"Booking is currently {b_data.get('status')}",
     })
 
     try:

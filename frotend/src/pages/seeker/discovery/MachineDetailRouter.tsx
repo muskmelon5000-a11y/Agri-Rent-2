@@ -15,7 +15,7 @@ export function MachineDetailRouter() {
     async function fetchMachine() {
       if (!id) return;
       try {
-        const data = await equipmentService.getById(Number(id));
+        const data = await equipmentService.getById(id!);
         setMachine(data);
       } catch (error) {
         console.error("Failed to load machine details:", error);

@@ -8,7 +8,7 @@ export interface OTPResponse {
 export interface AuthUser {
   access_token?: string;
   token_type?: string;
-  user_id: number;
+  user_id: string;
   role: string;
   name: string | null;
   is_new_user?: boolean;

@@ -1,38 +1,23 @@
-from sqlalchemy import create_engine, text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 import os
+import firebase_admin
+from firebase_admin import credentials, firestore
 from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./agrirent.db")
+# Path to the Firebase Service Account JSON key
+FIREBASE_CREDENTIALS_PATH = os.getenv("FIREBASE_CREDENTIALS_PATH", "firebase-adminsdk.json")
 
-# Supabase Postgres URIs often start with postgres:// instead of postgresql://
-# SQLAlchemy 1.4+ requires postgresql://
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+# Initialize Firebase Admin SDK
+try:
+    if not firebase_admin._apps:
+        cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
+        firebase_admin.initialize_app(cred)
+    print("Firebase Admin SDK initialized successfully.")
+except Exception as e:
+    print(f"Warning: Could not initialize Firebase Admin SDK. {e}")
+    print("Please ensure you have placed the 'firebase-adminsdk.json' file in the backend folder.")
 
-# If using sqlite, connect_args are needed
-if DATABASE_URL.startswith("sqlite"):
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-else:
-    engine = create_engine(DATABASE_URL, pool_pre_ping=True)
-    # Manually add the hashed_password column if it doesn't exist
-    try:
-        with engine.begin() as conn:
-            conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS hashed_password VARCHAR(255);"))
-    except Exception as e:
-        print(f"Migration error: {e}")
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
-
-
+# Firestore DB instance
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    return firestore.client()

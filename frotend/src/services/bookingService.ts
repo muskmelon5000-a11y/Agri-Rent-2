@@ -1,9 +1,9 @@
 import api from './api';
 
 export interface Booking {
-  id: number;
-  seeker_id: number;
-  equipment_id: number;
+  id: string;
+  seeker_id: string;
+  equipment_id: string;
   start_date: string;
   end_date: string;
   total_days: number;
@@ -25,7 +25,7 @@ export interface Booking {
 }
 
 export interface CreateBookingPayload {
-  equipment_id: number;
+  equipment_id: string;
   start_date: string;
   end_date: string;
   total_days: number;
@@ -53,17 +53,17 @@ export const bookingService = {
     return data;
   },
 
-  async getById(id: number): Promise<Booking> {
+  async getById(id: string): Promise<Booking> {
     const { data } = await api.get(`/bookings/${id}`);
     return data;
   },
 
-  async updateStatus(id: number, status: string): Promise<Booking> {
+  async updateStatus(id: string, status: string): Promise<Booking> {
     const { data } = await api.patch(`/bookings/${id}/status`, { status });
     return data;
   },
 
-  async cancel(id: number): Promise<void> {
+  async cancel(id: string): Promise<void> {
     await api.delete(`/bookings/${id}/cancel`);
   },
 };

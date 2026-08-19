@@ -78,7 +78,7 @@ class VerifyOTPRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
-    user_id: int
+    user_id: str
     role: str
     name: Optional[str]
     is_new_user: bool
@@ -107,7 +107,7 @@ class UserUpdate(UserBase):
 
 
 class UserOut(UserBase):
-    id: int
+    id: str
     phone: str
     role: str
     skill_points: int
@@ -160,8 +160,8 @@ class EquipmentUpdate(BaseModel):
 
 
 class EquipmentOut(EquipmentBase):
-    id: int
-    owner_id: int
+    id: str
+    owner_id: str
     rating: float
     total_ratings: int
     total_rentals: int
@@ -177,7 +177,7 @@ class EquipmentOut(EquipmentBase):
 # ─── Booking ──────────────────────────────────────────────────────────────────
 
 class BookingCreate(BaseModel):
-    equipment_id: int
+    equipment_id: str
     start_date: str
     end_date: str
     total_days: int
@@ -194,9 +194,9 @@ class BookingStatusUpdate(BaseModel):
 
 
 class BookingOut(BaseModel):
-    id: int
-    seeker_id: int
-    equipment_id: int
+    id: str
+    seeker_id: str
+    equipment_id: str
     start_date: str
     end_date: str
     total_days: int
@@ -222,15 +222,15 @@ class BookingOut(BaseModel):
 # ─── Review ───────────────────────────────────────────────────────────────────
 
 class ReviewCreate(BaseModel):
-    booking_id: int
-    equipment_id: int
+    booking_id: str
+    equipment_id: str
     rating: float
     comment: Optional[str] = None
 
 
 class ReviewOut(ReviewCreate):
-    id: int
-    reviewer_id: int
+    id: str
+    reviewer_id: str
     created_at: Optional[datetime] = None
 
     class Config:

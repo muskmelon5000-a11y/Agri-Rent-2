@@ -26,8 +26,8 @@ export function OwnerProfile() {
       if (!id) return;
       try {
         const [profileData, equipmentData] = await Promise.all([
-          userService.getPublicProfile(Number(id)),
-          equipmentService.getByOwner(Number(id))
+          userService.getPublicProfile(id!),
+          equipmentService.getByOwner(id!)
         ]);
         setProfile(profileData);
         setEquipmentList(equipmentData);

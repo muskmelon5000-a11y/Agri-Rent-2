@@ -25,7 +25,7 @@ export function MyEquipmentList() {
     loadEquipment();
   }, []);
 
-  const toggleAvailability = async (id: number) => {
+  const toggleAvailability = async (id: string) => {
     // Optimistic UI update
     setEquipment(equipment.map(item => 
       item.id === id ? { ...item, is_available: !item.is_available } : item

@@ -18,7 +18,7 @@ export function EditMachine() {
     async function load() {
       if (!id) return;
       try {
-        const data = await equipmentService.getById(Number(id));
+        const data = await equipmentService.getById(id!);
         setMachine(data);
       } catch (e) {
         console.error(e);
@@ -33,7 +33,7 @@ export function EditMachine() {
     if (!machine || !id) return;
     try {
       setIsSaving(true);
-      await equipmentService.update(Number(id), {
+      await equipmentService.update(id!, {
         name: machine.name,
         brand: machine.brand,
         year: machine.year,
@@ -53,7 +53,7 @@ export function EditMachine() {
     if (!id) return;
     if (window.confirm("Are you sure you want to delete this equipment?")) {
       try {
-        await equipmentService.delete(Number(id));
+        await equipmentService.delete(id!);
         navigate('/provider/equipment');
       } catch (e) {
         console.error(e);

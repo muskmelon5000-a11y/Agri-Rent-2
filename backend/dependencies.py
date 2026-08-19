@@ -1,17 +1,14 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
 from database import get_db
 from auth_utils import decode_token
-import models
 
 security = HTTPBearer()
 
-
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db)
-) -> models.User:
+    db = Depends(get_db)
+) -> dict:
     token = credentials.credentials
     payload = decode_token(token)
     if not payload:
@@ -24,19 +21,23 @@ def get_current_user(
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid token payload")
 
-    user = db.query(models.User).filter(models.User.id == int(user_id)).first()
-    if not user:
+    user_ref = db.collection("users").document(user_id)
+    user_doc = user_ref.get()
+    if not user_doc.exists:
         raise HTTPException(status_code=404, detail="User not found")
-    return user
+    
+    user_data = user_doc.to_dict()
+    user_data["id"] = user_doc.id
+    return user_data
 
 
-def require_provider(current_user: models.User = Depends(get_current_user)) -> models.User:
-    if current_user.role != "provider":
+def require_provider(current_user: dict = Depends(get_current_user)) -> dict:
+    if current_user.get("role") != "provider":
         raise HTTPException(status_code=403, detail="Provider access required")
     return current_user
 
 
-def require_seeker(current_user: models.User = Depends(get_current_user)) -> models.User:
-    if current_user.role != "seeker":
+def require_seeker(current_user: dict = Depends(get_current_user)) -> dict:
+    if current_user.get("role") != "seeker":
         raise HTTPException(status_code=403, detail="Seeker access required")
     return current_user
