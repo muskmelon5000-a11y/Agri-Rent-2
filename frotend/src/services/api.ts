@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://agrirent-backend-live-production.up.railway.app',
+  baseURL: 'https://reduce-due-compute-grid.trycloudflare.com',
   headers: {
     'Content-Type': 'application/json',
   },
