@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://acer-cosmetics-attractions-earning.trycloudflare.com',
+  baseURL: import.meta.env.VITE_API_URL || 'https://agrirent-backend-live-production.up.railway.app',
   headers: {
     'Content-Type': 'application/json',
   },
