@@ -34,7 +34,8 @@ export function LiveTrackingMap({ initialLat, initialLng, equipmentName = "Equip
         scrollWheelZoom={false}
       >
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://maps.google.com/">Google Maps</a>'
+          url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
         />
         
         {/* The trail of where it has been */}
