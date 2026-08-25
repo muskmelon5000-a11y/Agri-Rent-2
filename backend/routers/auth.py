@@ -8,6 +8,7 @@ from auth_utils import create_access_token, get_password_hash, verify_password
 from dependencies import get_current_user
 import schemas
 from google.cloud.firestore import Client
+import rest_db
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -23,30 +24,37 @@ def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
         otp = generate_otp()
         expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
 
-        users_ref = db.collection("users")
-        query = users_ref.where("email", "==", payload.email).limit(1).get()
-    
-        user_doc = None
-        for doc in query:
-            user_doc = doc
-            break
-        
-        if not user_doc:
-            # Create new user
-            new_user_data = {
-                "email": payload.email,
-                "created_at": datetime.now(timezone.utc),
-                "otp_code": otp,
-                "otp_expires_at": expires_at,
-                "role": "seeker"
-            }
-            users_ref.add(new_user_data)
+        if os.getenv("VERCEL") == "1":
+            user_doc = rest_db.get_user_by_email(payload.email)
+            if not user_doc:
+                rest_db.create_user(payload.email, otp, expires_at)
+            else:
+                rest_db.update_user(user_doc["id"], {"otp_code": otp, "otp_expires_at": expires_at.isoformat().replace("+00:00", "Z")})
         else:
-            # Update existing user
-            user_doc.reference.update({
-                "otp_code": otp,
-                "otp_expires_at": expires_at
-            })
+            users_ref = db.collection("users")
+            query = users_ref.where("email", "==", payload.email).limit(1).get()
+            
+            user_doc = None
+            for doc in query:
+                user_doc = doc
+                break
+            
+            if not user_doc:
+                # Create new user
+                new_user_data = {
+                    "email": payload.email,
+                    "created_at": datetime.now(timezone.utc),
+                    "otp_code": otp,
+                    "otp_expires_at": expires_at,
+                    "role": "seeker"
+                }
+                users_ref.add(new_user_data)
+            else:
+                # Update existing user
+                user_doc.reference.update({
+                    "otp_code": otp,
+                    "otp_expires_at": expires_at
+                })
 
         # In production: integrate SendGrid / Postmark / Mailgun here
         response = schemas.OTPResponse(message=f"OTP sent to {payload.email}")
@@ -60,50 +68,74 @@ def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
 @router.post("/signup", response_model=schemas.TokenResponse)
 def signup(payload: schemas.SignupRequest, db: Client = Depends(get_db)):
     """Verify OTP, set password, and return JWT token."""
-    users_ref = db.collection("users")
-    query = users_ref.where("email", "==", payload.email).limit(1).get()
-    
-    user_doc = None
-    for doc in query:
-        user_doc = doc
-        break
+    if os.getenv("VERCEL") == "1":
+        user_data = rest_db.get_user_by_email(payload.email)
+        if not user_data:
+            raise HTTPException(status_code=404, detail="Email not found. Send OTP first.")
+        user_id = user_data["id"]
+        
+        # Verify OTP
+        if "otp_code" not in user_data or not user_data["otp_code"]:
+            raise HTTPException(status_code=400, detail="No OTP was sent to this email.")
+            
+        if user_data["otp_code"] != payload.otp:
+            raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
+            
+        rest_db.update_user(user_id, {
+            "name": payload.name,
+            "role": payload.role,
+            "hashed_password": get_password_hash(payload.password),
+            "village": payload.village,
+            "district": payload.district,
+            "phone": payload.phone,
+            "otp_code": None,
+            "otp_expires_at": None
+        })
+    else:
+        users_ref = db.collection("users")
+        query = users_ref.where("email", "==", payload.email).limit(1).get()
+        
+        user_doc = None
+        for doc in query:
+            user_doc = doc
+            break
 
-    if not user_doc:
-        raise HTTPException(status_code=404, detail="Email not found. Send OTP first.")
+        if not user_doc:
+            raise HTTPException(status_code=404, detail="Email not found. Send OTP first.")
 
-    user_data = user_doc.to_dict()
+        user_data = user_doc.to_dict()
+        user_id = user_doc.id
 
-    if "otp_code" not in user_data or not user_data["otp_code"]:
-        raise HTTPException(status_code=400, detail="No OTP was sent to this email.")
+        if "otp_code" not in user_data or not user_data["otp_code"]:
+            raise HTTPException(status_code=400, detail="No OTP was sent to this email.")
 
-    # Check expiry
-    exp = user_data.get("otp_expires_at")
-    if exp:
-        # Firestore datetime is usually aware
-        if datetime.now(timezone.utc) > exp:
-            raise HTTPException(status_code=400, detail="OTP expired. Please request a new one.")
+        # Check expiry
+        exp = user_data.get("otp_expires_at")
+        if exp:
+            if datetime.now(timezone.utc) > exp:
+                raise HTTPException(status_code=400, detail="OTP expired. Please request a new one.")
 
-    # Check OTP
-    if user_data["otp_code"] != payload.otp:
-        raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
+        # Check OTP
+        if user_data["otp_code"] != payload.otp:
+            raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
 
-    # Update user details
-    user_doc.reference.update({
-        "name": payload.name,
-        "role": payload.role,
-        "hashed_password": get_password_hash(payload.password),
-        "village": payload.village,
-        "district": payload.district,
-        "phone": payload.phone,
-        "otp_code": None,
-        "otp_expires_at": None
-    })
+        # Update user details
+        user_doc.reference.update({
+            "name": payload.name,
+            "role": payload.role,
+            "hashed_password": get_password_hash(payload.password),
+            "village": payload.village,
+            "district": payload.district,
+            "phone": payload.phone,
+            "otp_code": None,
+            "otp_expires_at": None
+        })
 
-    token = create_access_token({"sub": user_doc.id, "role": payload.role})
+    token = create_access_token({"sub": user_id, "role": payload.role})
 
     return schemas.TokenResponse(
         access_token=token,
-        user_id=user_doc.id,
+        user_id=user_id,
         role=payload.role,
         name=payload.name,
         is_new_user=True,
@@ -112,29 +144,37 @@ def signup(payload: schemas.SignupRequest, db: Client = Depends(get_db)):
 @router.post("/login", response_model=schemas.TokenResponse)
 def login(payload: schemas.LoginRequest, db: Client = Depends(get_db)):
     """Login with email and password."""
-    users_ref = db.collection("users")
-    query = users_ref.where("email", "==", payload.email).limit(1).get()
-    
-    user_doc = None
-    for doc in query:
-        user_doc = doc
-        break
-    
-    if not user_doc:
-        raise HTTPException(status_code=401, detail="Invalid email or password.")
+    if os.getenv("VERCEL") == "1":
+        user_data = rest_db.get_user_by_email(payload.email)
+        if not user_data:
+            raise HTTPException(status_code=401, detail="Invalid email or password.")
+        user_id = user_data["id"]
+    else:
+        users_ref = db.collection("users")
+        query = users_ref.where("email", "==", payload.email).limit(1).get()
         
-    user_data = user_doc.to_dict()
+        user_doc = None
+        for doc in query:
+            user_doc = doc
+            break
+        
+        if not user_doc:
+            raise HTTPException(status_code=401, detail="Invalid email or password.")
+            
+        user_data = user_doc.to_dict()
+        user_id = user_doc.id
+
     hashed_password = user_data.get("hashed_password")
     
     if not hashed_password or not verify_password(payload.password, hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password.")
 
     role = user_data.get("role", "seeker")
-    token = create_access_token({"sub": user_doc.id, "role": role})
+    token = create_access_token({"sub": user_id, "role": role})
     
     return schemas.TokenResponse(
         access_token=token,
-        user_id=user_doc.id,
+        user_id=user_id,
         role=role,
         name=user_data.get("name"),
         is_new_user=False,
