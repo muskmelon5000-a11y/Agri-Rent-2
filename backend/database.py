@@ -54,6 +54,11 @@ try:
 except Exception as e:
     print(f"Warning: Could not initialize Firebase Admin SDK. {e}")
 
-# Firestore DB instance
+# Cache the Firestore client globally to prevent gRPC channel exhaustion on Vercel
+_db_client = None
+
 def get_db():
-    return firestore.client()
+    global _db_client
+    if _db_client is None:
+        _db_client = firestore.client()
+    return _db_client
