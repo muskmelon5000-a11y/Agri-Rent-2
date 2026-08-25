@@ -37,7 +37,8 @@ export function AuthPage() {
       const user = await authService.login(email, password);
       login(user);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Invalid credentials');
+      const detail = err.response?.data?.detail;
+      setError(typeof detail === 'string' ? detail : 'Invalid email or password. (Or server is still updating)');
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +59,8 @@ export function AuthPage() {
       }
       setShowOTP(true);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to send OTP');
+      const detail = err.response?.data?.detail;
+      setError(typeof detail === 'string' ? detail : 'Failed to send OTP (Server might be updating)');
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +74,8 @@ export function AuthPage() {
       const user = await authService.signup(email, otp, password, name, role, village, district, phone);
       login(user);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Invalid OTP');
+      const detail = err.response?.data?.detail;
+      setError(typeof detail === 'string' ? detail : 'Invalid OTP or missing fields');
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +88,7 @@ export function AuthPage() {
           <LeafIcon className="w-12 h-12" />
         </div>
         <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
-          AgriRent
+          CropMate
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Smart Equipment Sharing

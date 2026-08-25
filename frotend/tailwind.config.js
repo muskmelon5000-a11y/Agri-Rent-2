@@ -8,33 +8,33 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#2E7D32',
-          50: '#E8F5E9',
-          100: '#C8E6C9',
-          200: '#A5D6A7',
-          300: '#81C784',
-          400: '#66BB6A',
-          500: '#2E7D32',
-          600: '#2E7D32',
-          700: '#1B5E20',
-          800: '#1B5E20',
-          900: '#1B5E20',
+          DEFAULT: '#059669', // Emerald 600
+          50: '#ECFDF5',
+          100: '#D1FAE5',
+          200: '#A7F3D0',
+          300: '#6EE7B7',
+          400: '#34D399',
+          500: '#10B981',
+          600: '#059669',
+          700: '#047857',
+          800: '#065F46',
+          900: '#064E3B',
         },
         secondary: {
-          DEFAULT: '#8BC34A',
-          50: '#F1F8E9',
-          100: '#DCEDC8',
-          200: '#C5E1A5',
-          300: '#AED581',
-          400: '#9CCC65',
-          500: '#8BC34A',
-          600: '#7CB342',
-          700: '#689F38',
-          800: '#558B2F',
-          900: '#33691E',
+          DEFAULT: '#D97706', // Amber 600
+          50: '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          300: '#FCD34D',
+          400: '#FBBF24',
+          500: '#F59E0B',
+          600: '#D97706',
+          700: '#B45309',
+          800: '#92400E',
+          900: '#78350F',
         },
         surface: '#FFFFFF',
-        background: '#FAFAFA',
+        background: '#F8FAFC', // Slate 50 for a softer modern look
         earth: {
           amber: '#F59E0B',
           terracotta: '#C2410C',
@@ -42,7 +42,22 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Outfit', 'system-ui', 'sans-serif'],
+      },
+      keyframes: {
+        'fade-in-up': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(20px)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+        },
+      },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
       },
     },
   },

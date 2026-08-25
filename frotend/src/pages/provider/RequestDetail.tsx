@@ -105,7 +105,7 @@ export function RequestDetail() {
               className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20BD5A] text-white border-none"
               onClick={() => {
                 if (booking.seeker_phone) {
-                  const url = `https://wa.me/91${booking.seeker_phone}?text=${encodeURIComponent(`Hi ${booking.seeker_name}, regarding your Agri-Rent booking request...`)}`;
+                  const url = `https://wa.me/91${booking.seeker_phone}?text=${encodeURIComponent(`Hi ${booking.seeker_name}, regarding your CropMate booking request...`)}`;
                   window.open(url, '_blank');
                 } else {
                   alert("Seeker's phone number is not available.");

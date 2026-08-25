@@ -79,10 +79,10 @@ export function HelpSupport() {
         <div className="text-center pt-4">
           <p className="text-sm text-gray-600 mb-2">Prefer email?</p>
           <a
-            href="mailto:support@agrirenthub.com"
+            href="mailto:support@cropmate.com"
             className="inline-flex items-center gap-2 text-primary font-bold">
             
-            <MailIcon className="w-4 h-4" /> support@agrirenthub.com
+            <MailIcon className="w-4 h-4" /> support@cropmate.com
           </a>
         </div>
       </div>

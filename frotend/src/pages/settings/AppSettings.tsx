@@ -167,7 +167,7 @@ export function AppSettings() {
 
         <div className="text-center pb-4">
           <p className="text-xs text-gray-400 font-semibold">
-            Agri-Rent Hub v1.0.4
+            CropMate v1.0.4
           </p>
         </div>
       </div>

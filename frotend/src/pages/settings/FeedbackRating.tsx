@@ -34,7 +34,7 @@ export function FeedbackRating() {
             How is your experience?
           </h1>
           <p className="text-gray-600">
-            Your feedback helps us improve Agri-Rent Hub for everyone.
+            Your feedback helps us improve CropMate for everyone.
           </p>
         </div>
 

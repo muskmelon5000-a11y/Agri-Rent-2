@@ -38,7 +38,7 @@ export function PaymentReceipt() {
         <Card className="p-6 relative overflow-hidden">
           {/* Receipt jagged edge effect top/bottom could be added with CSS, keeping it simple here */}
           <div className="text-center mb-6 pb-6 border-b border-dashed border-gray-300">
-            <h2 className="text-xl font-bold text-gray-900">Agri-Rent Hub</h2>
+            <h2 className="text-xl font-bold text-gray-900">CropMate</h2>
             <p className="text-sm text-gray-500">Booking ID: ARH-8492</p>
             <p className="text-sm text-gray-500">Date: Oct 17, 2023</p>
           </div>

@@ -1,5 +1,5 @@
 // import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { PhoneFrame } from './components/shared/PhoneFrame';
 import { ScreenIndex } from './components/shared/ScreenIndex';
 // Auth
@@ -57,7 +57,7 @@ import { AuthProvider } from './context/AuthContext';
 
 export function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <PhoneFrame>
           <Routes>
@@ -136,6 +136,6 @@ export function App() {
         </Routes>
       </PhoneFrame>
       </AuthProvider>
-    </BrowserRouter>);
+    </HashRouter>);
 
 }

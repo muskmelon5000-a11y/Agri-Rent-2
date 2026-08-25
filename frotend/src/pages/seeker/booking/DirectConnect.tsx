@@ -27,7 +27,7 @@ export function DirectConnect() {
 
   const handleWhatsApp = () => {
     if (ownerPhone) {
-      const url = `https://wa.me/91${ownerPhone}?text=${encodeURIComponent(`Hi ${ownerName}, I have booked your ${equipmentName} on Agri-Rent Hub.`)}`;
+      const url = `https://wa.me/91${ownerPhone}?text=${encodeURIComponent(`Hi ${ownerName}, I have booked your ${equipmentName} on CropMate.`)}`;
       window.open(url, '_blank');
     } else {
       alert("Phone number not available for this owner.");
