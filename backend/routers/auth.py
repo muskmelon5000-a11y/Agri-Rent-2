@@ -24,12 +24,12 @@ def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
         expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
 
         users_ref = db.collection("users")
-    query = users_ref.where("email", "==", payload.email).limit(1).stream()
+        query = users_ref.where("email", "==", payload.email).limit(1).get()
     
-    user_doc = None
-    for doc in query:
-        user_doc = doc
-        break
+        user_doc = None
+        for doc in query:
+            user_doc = doc
+            break
         
         if not user_doc:
             # Create new user
@@ -61,7 +61,7 @@ def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
 def signup(payload: schemas.SignupRequest, db: Client = Depends(get_db)):
     """Verify OTP, set password, and return JWT token."""
     users_ref = db.collection("users")
-    query = users_ref.where("email", "==", payload.email).limit(1).stream()
+    query = users_ref.where("email", "==", payload.email).limit(1).get()
     
     user_doc = None
     for doc in query:
@@ -113,7 +113,7 @@ def signup(payload: schemas.SignupRequest, db: Client = Depends(get_db)):
 def login(payload: schemas.LoginRequest, db: Client = Depends(get_db)):
     """Login with email and password."""
     users_ref = db.collection("users")
-    query = users_ref.where("email", "==", payload.email).limit(1).stream()
+    query = users_ref.where("email", "==", payload.email).limit(1).get()
     
     user_doc = None
     for doc in query:
