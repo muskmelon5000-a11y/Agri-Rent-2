@@ -57,6 +57,20 @@ export function SearchResultsMap() {
   const [searchCenter, setSearchCenter] = useState({ lat: 23.0225, lng: 72.5714 });
   const [isLoading, setIsLoading] = useState(false);
 
+  // Map layer state: 'streets' | 'hybrid' | 'terrain'
+  const [mapLayer, setMapLayer] = useState<'streets' | 'hybrid' | 'terrain'>('streets');
+  
+  // Search bar state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+
+  const tileUrls = {
+    streets: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+    hybrid: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+    terrain: 'https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
+  };
+
   const requestLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -76,6 +90,32 @@ export function SearchResultsMap() {
   useEffect(() => {
     requestLocation();
   }, []);
+
+  const handleLocationSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    try {
+      setIsSearchingLocation(true);
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5&countrycodes=in`
+      );
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const topResult = data[0];
+        const newLoc = { lat: parseFloat(topResult.lat), lng: parseFloat(topResult.lon) };
+        setMapCenter(newLoc);
+        setSearchCenter(newLoc);
+        setSearchResults([]);
+      } else {
+        alert("Location not found. Try searching for a nearby district or city name.");
+      }
+    } catch (err) {
+      console.error("Geocoding search error:", err);
+    } finally {
+      setIsSearchingLocation(false);
+    }
+  };
 
   const loadNearby = async (center: { lat: number, lng: number }) => {
     try {
@@ -104,30 +144,52 @@ export function SearchResultsMap() {
 
   return (
     <div className="h-full bg-background flex flex-col relative">
-      <div className="absolute top-0 left-0 right-0 z-[1000]">
-        <AppHeader
-          title="Map View (20km radius)"
-          showBack
-          action={
+      {/* Top Header & Search Bar Overlay */}
+      <div className="absolute top-0 left-0 right-0 z-[1000] p-3 bg-gradient-to-b from-black/60 via-black/30 to-transparent">
+        <div className="flex items-center gap-2 mb-2">
+          <Link to="/seeker/home" className="w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow flex items-center justify-center text-gray-800">
+            ←
+          </Link>
+
+          {/* Location Search Form */}
+          <form onSubmit={handleLocationSearch} className="flex-1 relative flex items-center">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search village, city, district in India..."
+              className="w-full h-10 pl-9 pr-20 rounded-full bg-white/95 backdrop-blur shadow-md text-sm font-medium text-gray-900 border border-gray-200 outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+            <MapPinIcon className="w-4 h-4 text-emerald-600 absolute left-3 pointer-events-none" />
+            <button
+              type="submit"
+              disabled={isSearchingLocation}
+              className="absolute right-1 px-3 py-1 bg-emerald-600 text-white font-bold text-xs rounded-full shadow hover:bg-emerald-700 transition"
+            >
+              {isSearchingLocation ? "Locating..." : "Search"}
+            </button>
+          </form>
+
           <Link to="/seeker/search">
-              <button className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center">
-                <ListIcon className="w-5 h-5 text-primary" />
-              </button>
-            </Link>
-          } />
+            <button className="w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow flex items-center justify-center text-gray-800">
+              <ListIcon className="w-5 h-5 text-emerald-700" />
+            </button>
+          </Link>
+        </div>
       </div>
 
       {/* Full Screen Map */}
       <div className="flex-1 relative z-0">
         <MapContainer 
           center={[mapCenter.lat, mapCenter.lng]} 
-          zoom={11} 
+          zoom={12} 
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
         >
           <TileLayer
+            key={mapLayer}
             attribution='&copy; <a href="https://maps.google.com/">Google Maps</a>'
-            url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+            url={tileUrls[mapLayer]}
           />
           
           <MapMoveListener onMoveEnd={setMapCenter} />
@@ -137,10 +199,10 @@ export function SearchResultsMap() {
           <Circle 
             center={[searchCenter.lat, searchCenter.lng]}
             radius={20000} // 20km
-            pathOptions={{ color: '#2563EB', fillColor: '#2563EB', fillOpacity: 0.1, weight: 1 }}
+            pathOptions={{ color: '#059669', fillColor: '#10B981', fillOpacity: 0.15, weight: 2 }}
           />
           <Marker position={[searchCenter.lat, searchCenter.lng]}>
-            <Popup>Your Location</Popup>
+            <Popup>📍 Your Search Location</Popup>
           </Marker>
 
           {/* Equipment Pins */}
@@ -161,20 +223,49 @@ export function SearchResultsMap() {
           ))}
         </MapContainer>
 
+        {/* Floating Google Maps Style Layer Switcher */}
+        <div className="absolute top-20 right-4 z-[1000] bg-white/95 backdrop-blur rounded-2xl shadow-lg border border-gray-200 p-1 flex flex-col gap-1">
+          <button
+            onClick={() => setMapLayer('streets')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
+              mapLayer === 'streets' ? 'bg-emerald-600 text-white shadow' : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            🗺️ Map
+          </button>
+          <button
+            onClick={() => setMapLayer('hybrid')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
+              mapLayer === 'hybrid' ? 'bg-emerald-600 text-white shadow' : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            🛰️ Satellite
+          </button>
+          <button
+            onClick={() => setMapLayer('terrain')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
+              mapLayer === 'terrain' ? 'bg-emerald-600 text-white shadow' : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            ⛰️ Terrain
+          </button>
+        </div>
+
         {/* Search this area button */}
         {Math.abs(mapCenter.lat - searchCenter.lat) > 0.05 && (
           <button 
             onClick={handleSearchArea}
-            className="absolute top-20 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-md text-sm font-bold text-gray-900 border border-gray-200 z-[1000]"
+            className="absolute top-20 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur px-4 py-2 rounded-full shadow-lg text-xs font-bold text-emerald-800 border border-emerald-200 z-[1000] animate-bounce"
           >
-            {isLoading ? "Searching..." : "Search this area"}
+            {isLoading ? "Searching..." : "🔄 Search this map area"}
           </button>
         )}
 
         {/* Locate Me Button */}
         <button
           onClick={requestLocation}
-          className="absolute bottom-60 right-4 bg-white p-3 rounded-full shadow-lg border border-gray-200 z-[1000] text-primary"
+          className="absolute bottom-60 right-4 bg-white/95 backdrop-blur p-3 rounded-full shadow-xl border border-gray-200 z-[1000] text-emerald-700 hover:scale-105 transition"
+          title="Go to my GPS location"
         >
           <MapPinIcon className="w-6 h-6" />
         </button>
