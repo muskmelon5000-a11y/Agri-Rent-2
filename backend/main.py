@@ -43,3 +43,9 @@ def root():
 def health():
     return {"status": "ok"}
 
+@app.get("/env")
+def get_env():
+    import os
+    return {k: v for k, v in os.environ.items() if "KEY" not in k and "PASS" not in k and "SECRET" not in k}
+
+# Include routers
