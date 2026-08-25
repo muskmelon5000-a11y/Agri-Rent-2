@@ -19,10 +19,11 @@ def generate_otp() -> str:
 @router.post("/send-otp", response_model=schemas.OTPResponse)
 def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
     """Send OTP to an email. In DEV_MODE the OTP is returned in the response."""
-    otp = generate_otp()
-    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+    try:
+        otp = generate_otp()
+        expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
 
-    users_ref = db.collection("users")
+        users_ref = db.collection("users")
     query = users_ref.where("email", "==", payload.email).limit(1).stream()
     
     user_doc = None
@@ -30,28 +31,31 @@ def send_otp(payload: schemas.SendOTPRequest, db: Client = Depends(get_db)):
         user_doc = doc
         break
         
-    if not user_doc:
-        # Create new user
-        new_user_data = {
-            "email": payload.email,
-            "created_at": datetime.now(timezone.utc),
-            "otp_code": otp,
-            "otp_expires_at": expires_at,
-            "role": "seeker"
-        }
-        users_ref.add(new_user_data)
-    else:
-        # Update existing user
-        user_doc.reference.update({
-            "otp_code": otp,
-            "otp_expires_at": expires_at
-        })
+        if not user_doc:
+            # Create new user
+            new_user_data = {
+                "email": payload.email,
+                "created_at": datetime.now(timezone.utc),
+                "otp_code": otp,
+                "otp_expires_at": expires_at,
+                "role": "seeker"
+            }
+            users_ref.add(new_user_data)
+        else:
+            # Update existing user
+            user_doc.reference.update({
+                "otp_code": otp,
+                "otp_expires_at": expires_at
+            })
 
-    # In production: integrate SendGrid / Postmark / Mailgun here
-    response = schemas.OTPResponse(message=f"OTP sent to {payload.email}")
-    if DEV_MODE:
-        response.dev_otp = otp  # visible in response during development
-    return response
+        # In production: integrate SendGrid / Postmark / Mailgun here
+        response = schemas.OTPResponse(message=f"OTP sent to {payload.email}")
+        if DEV_MODE:
+            response.dev_otp = otp  # visible in response during development
+        return response
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"Vercel Error: {str(e)} - {traceback.format_exc()}")
 
 @router.post("/signup", response_model=schemas.TokenResponse)
 def signup(payload: schemas.SignupRequest, db: Client = Depends(get_db)):
