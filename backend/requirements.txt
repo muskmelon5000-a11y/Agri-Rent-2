@@ -4,6 +4,7 @@ firebase-admin==6.5.0
 python-jose==3.3.0
 passlib==1.7.4
 python-multipart==0.0.9
+urllib3<2
 python-dotenv==1.0.1
 geopy==2.4.1
 websockets==12.0
