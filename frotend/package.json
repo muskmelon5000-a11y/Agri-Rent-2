@@ -2,7 +2,7 @@
   "name": "magic-patterns-vite-template",
   "version": "0.0.1",
   "private": true,
-  "homepage": "https://muskmelon5000-a11y.github.io/CropMate-2",
+  "homepage": "https://muskmelon5000-a11y.github.io/Agri-Rent-2",
   "type": "module",
   "scripts": {
     "dev": "npx vite",
