@@ -55,7 +55,7 @@ import { LogoutScreen } from './pages/settings/LogoutScreen';
 import { FeedbackRating } from './pages/settings/FeedbackRating';
 import { ErrorBoundary } from './components/shared/ErrorBoundary';
 
-import { useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 function RootRedirect() {
   const { user, isLoading } = useAuth();
