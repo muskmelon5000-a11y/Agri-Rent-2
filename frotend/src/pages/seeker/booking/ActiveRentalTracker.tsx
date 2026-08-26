@@ -21,7 +21,10 @@ export function ActiveRentalTracker() {
     async function loadActiveRental() {
       try {
         const data = await bookingService.getMyBookings();
-        const active = data.find(b => b.status === 'active' || b.status === 'accepted' || b.status === 'pending');
+        // Prioritize active first, then accepted, then pending
+        const active = data.find(b => b.status === 'active')
+          || data.find(b => b.status === 'accepted')
+          || data.find(b => b.status === 'pending');
         setActiveBooking(active || null);
       } catch (error) {
         console.error("Failed to load active rental:", error);
@@ -30,6 +33,10 @@ export function ActiveRentalTracker() {
       }
     }
     loadActiveRental();
+
+    // Live auto-polling every 3 seconds so status updates automatically
+    const interval = setInterval(loadActiveRental, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   const formatDate = (dateStr: string) => {

@@ -25,6 +25,9 @@ export function IncomingRequests() {
       }
     }
     loadRequests();
+
+    const interval = setInterval(loadRequests, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   const filteredRequests = requests.filter(req => {
