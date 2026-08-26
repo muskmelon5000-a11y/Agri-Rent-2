@@ -9,14 +9,17 @@ export function AddMachineStep3() {
   const location = useLocation();
   const equipmentData = location.state?.equipmentData || {};
 
-  const [pricePerDay, setPricePerDay] = useState('');
-  const [pricePerHour, setPricePerHour] = useState('');
+  const equipmentType = equipmentData.type || 'tractor';
+  const [pricePerDay, setPricePerDay] = useState(equipmentData.price_per_day || '');
+  const [pricePerHour, setPricePerHour] = useState(equipmentData.price_per_hour || '');
+  const [pricePerAcre, setPricePerAcre] = useState(equipmentData.price_per_acre || '');
 
   const handleNext = () => {
     const updatedData = {
       ...equipmentData,
       price_per_day: Number(pricePerDay) || 0,
-      price_per_hour: Number(pricePerHour) || 0,
+      price_per_hour: Number(pricePerHour) || (Number(pricePerDay) ? Math.round(Number(pricePerDay) / 8) : 0),
+      price_per_acre: Number(pricePerAcre) || 0,
     };
     navigate('/provider/add-machine/4', { state: { equipmentData: updatedData } });
   };
@@ -30,7 +33,7 @@ export function AddMachineStep3() {
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-bold text-primary">Step 3 of 4</span>
           <span className="text-sm font-medium text-gray-500">
-            Pricing & Rates
+            Pricing & Rates ({equipmentType.toUpperCase()})
           </span>
         </div>
         <div className="flex gap-2">
@@ -46,9 +49,9 @@ export function AddMachineStep3() {
           <h2 className="text-lg font-bold text-gray-900 mb-4">Rental Rates</h2>
           <div className="space-y-4">
             <Input
-              label="Daily Rate (₹)"
+              label="Daily Rate (₹) - Required"
               type="number"
-              placeholder="e.g. 1200"
+              placeholder={equipmentType === 'drone' ? 'e.g. 3500' : 'e.g. 1200'}
               value={pricePerDay}
               onChange={(e) => setPricePerDay(e.target.value)}
               icon={<span className="text-gray-500 font-bold">₹</span>} />
@@ -56,7 +59,7 @@ export function AddMachineStep3() {
             <Input
               label="Hourly Rate (₹) - Optional"
               type="number"
-              placeholder="e.g. 150"
+              placeholder={equipmentType === 'drone' ? 'e.g. 500' : 'e.g. 150'}
               value={pricePerHour}
               onChange={(e) => setPricePerHour(e.target.value)}
               icon={<span className="text-gray-500 font-bold">₹</span>} />
@@ -64,9 +67,10 @@ export function AddMachineStep3() {
             <Input
               label="Per Acre Rate (₹) - Optional"
               type="number"
-              placeholder="e.g. 800"
+              placeholder={equipmentType === 'drone' ? 'e.g. 350' : 'e.g. 800'}
+              value={pricePerAcre}
+              onChange={(e) => setPricePerAcre(e.target.value)}
               icon={<span className="text-gray-500 font-bold">₹</span>} />
-            
           </div>
         </div>
 

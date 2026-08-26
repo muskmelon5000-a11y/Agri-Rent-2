@@ -127,8 +127,8 @@ export function AddMachineStep4() {
               zoomControl={false}
             >
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://maps.google.com/">Google Maps</a>'
+                url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
               />
               <LocationPicker position={locationState} setPosition={setLocationState} />
             </MapContainer>
