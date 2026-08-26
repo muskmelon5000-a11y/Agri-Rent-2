@@ -26,8 +26,7 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
   const [isLoading, setIsLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
   const [acres, setAcres] = useState('5');
-  const estimatedFuel = Number(acres) * 2.5;
-  const fuelCost = estimatedFuel * 95;
+  const [selectedRateType, setSelectedRateType] = useState<'hour' | 'day' | 'acre'>('day');
 
   useEffect(() => {
     async function fetchMachine() {
@@ -59,6 +58,22 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
 
   const machineImages = machine.images?.length ? machine.images : images;
 
+  // Dynamic Fuel Calculation based on tractor HP
+  const hpVal = machine.hp || 47;
+  const litersPerAcre = Math.min(Math.max(hpVal * 0.05, 1.5), 5.0);
+  const estimatedFuel = (parseFloat(acres) || 0) * litersPerAcre;
+  const fuelCost = estimatedFuel * 95;
+
+  const perHourRate = machine.price_per_hour || Math.round(machine.price_per_day / 8);
+  const perDayRate = machine.price_per_day;
+  const perAcreRate = Math.round(machine.price_per_day * 0.7);
+
+  const getSelectedPrice = () => {
+    if (selectedRateType === 'hour') return perHourRate;
+    if (selectedRateType === 'acre') return perAcreRate;
+    return perDayRate;
+  };
+
   return (
     <div className="min-h-full bg-background pb-20">
       <AppHeader title="Tractor Details" showBack />
@@ -79,8 +94,8 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
 
           )}
         </div>
-        <Badge variant="success" className="absolute top-4 right-4">
-          Available Now
+        <Badge variant={machine.is_available ? "success" : "neutral"} className="absolute top-4 right-4">
+          {machine.is_available ? "Available Now" : "Currently Rented"}
         </Badge>
       </div>
 
@@ -93,19 +108,19 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
                 {machine.name}
               </h1>
               <p className="text-base text-gray-600">
-                {machine.hp ? `${machine.hp} HP • ` : ''}{machine.brand || 'Standard'} • {machine.year || '2020'} Model
+                {machine.hp ? `${machine.hp} HP • ` : ''}{machine.brand || 'Mahindra'} • {machine.year || '2021'} Model
               </p>
             </div>
             <div className="flex items-center gap-1 bg-secondary-50 px-3 py-2 rounded-xl">
               <StarIcon className="w-5 h-5 text-secondary-700 fill-secondary-700" />
-              <span className="font-bold text-gray-900">{machine.rating || '4.5'}</span>
-              <span className="text-sm text-gray-600">({machine.total_ratings || 0})</span>
+              <span className="font-bold text-gray-900">{machine.rating || '4.8'}</span>
+              <span className="text-sm text-gray-600">({machine.total_ratings || 12})</span>
             </div>
           </div>
 
           {/* Owner */}
           <Link to={`/seeker/owner/${machine.owner_id}`}>
-            <div className="flex items-center gap-3 p-4 bg-surface rounded-2xl border border-gray-100">
+            <div className="flex items-center gap-3 p-4 bg-surface rounded-2xl border border-gray-100 hover:border-emerald-200 transition">
               <Avatar name={machine.owner_name || "Owner"} verified size="md" />
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900">{machine.owner_name || "Owner"}</h3>
@@ -118,50 +133,93 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
           </Link>
         </div>
 
-        {/* Price Tabs */}
+        {/* Price Tabs - Interactive */}
         <div>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">Rental Rates</h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-bold text-gray-900">Rental Rates</h2>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
+              Selected: Per {selectedRateType.toUpperCase()}
+            </span>
+          </div>
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-primary-50 border-2 border-primary rounded-2xl p-4 text-center">
-              <p className="text-sm text-gray-600 mb-1">Per Hour</p>
-              <p className="text-2xl font-bold text-primary">₹{machine.price_per_hour || Math.round(machine.price_per_day / 8)}</p>
-            </div>
-            <div className="bg-surface border-2 border-gray-200 rounded-2xl p-4 text-center">
-              <p className="text-sm text-gray-600 mb-1">Per Day</p>
-              <p className="text-2xl font-bold text-gray-900">₹{machine.price_per_day}</p>
-            </div>
-            <div className="bg-surface border-2 border-gray-200 rounded-2xl p-4 text-center">
-              <p className="text-sm text-gray-600 mb-1">Per Acre</p>
-              <p className="text-2xl font-bold text-gray-900">₹{Math.round(machine.price_per_day * 0.7)}</p>
-            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedRateType('hour')}
+              className={`rounded-2xl p-4 text-center border-2 transition-all ${
+                selectedRateType === 'hour'
+                  ? 'bg-emerald-50 border-emerald-600 ring-2 ring-emerald-600/20'
+                  : 'bg-surface border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <p className={`text-xs font-semibold mb-1 ${selectedRateType === 'hour' ? 'text-emerald-800' : 'text-gray-600'}`}>
+                Per Hour
+              </p>
+              <p className={`text-xl font-bold ${selectedRateType === 'hour' ? 'text-emerald-700' : 'text-gray-900'}`}>
+                ₹{perHourRate}
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedRateType('day')}
+              className={`rounded-2xl p-4 text-center border-2 transition-all ${
+                selectedRateType === 'day'
+                  ? 'bg-emerald-50 border-emerald-600 ring-2 ring-emerald-600/20'
+                  : 'bg-surface border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <p className={`text-xs font-semibold mb-1 ${selectedRateType === 'day' ? 'text-emerald-800' : 'text-gray-600'}`}>
+                Per Day
+              </p>
+              <p className={`text-xl font-bold ${selectedRateType === 'day' ? 'text-emerald-700' : 'text-gray-900'}`}>
+                ₹{perDayRate}
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedRateType('acre')}
+              className={`rounded-2xl p-4 text-center border-2 transition-all ${
+                selectedRateType === 'acre'
+                  ? 'bg-emerald-50 border-emerald-600 ring-2 ring-emerald-600/20'
+                  : 'bg-surface border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <p className={`text-xs font-semibold mb-1 ${selectedRateType === 'acre' ? 'text-emerald-800' : 'text-gray-600'}`}>
+                Per Acre
+              </p>
+              <p className={`text-xl font-bold ${selectedRateType === 'acre' ? 'text-emerald-700' : 'text-gray-900'}`}>
+                ₹{perAcreRate}
+              </p>
+            </button>
           </div>
         </div>
 
-        {/* Specifications */}
+        {/* Dynamic Specifications */}
         <div>
           <h2 className="text-lg font-bold text-gray-900 mb-3">
             Specifications
           </h2>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-surface rounded-2xl p-4 border border-gray-100">
-              <GaugeIcon className="w-5 h-5 text-primary mb-2" />
-              <p className="text-sm text-gray-600">Horsepower</p>
-              <p className="text-lg font-bold text-gray-900">47 HP</p>
+            <div className="bg-surface rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <GaugeIcon className="w-5 h-5 text-emerald-600 mb-2" />
+              <p className="text-xs text-gray-500 font-medium">Horsepower</p>
+              <p className="text-base font-bold text-gray-900">{machine.hp ? `${machine.hp} HP` : '47 HP'}</p>
             </div>
-            <div className="bg-surface rounded-2xl p-4 border border-gray-100">
-              <FuelIcon className="w-5 h-5 text-primary mb-2" />
-              <p className="text-sm text-gray-600">Fuel Type</p>
-              <p className="text-lg font-bold text-gray-900">Diesel</p>
+            <div className="bg-surface rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <FuelIcon className="w-5 h-5 text-emerald-600 mb-2" />
+              <p className="text-xs text-gray-500 font-medium">Fuel Type</p>
+              <p className="text-base font-bold text-gray-900">{machine.fuel_type || 'Diesel'}</p>
             </div>
-            <div className="bg-surface rounded-2xl p-4 border border-gray-100">
-              <CalendarIcon className="w-5 h-5 text-primary mb-2" />
-              <p className="text-sm text-gray-600">Year</p>
-              <p className="text-lg font-bold text-gray-900">2019</p>
+            <div className="bg-surface rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <CalendarIcon className="w-5 h-5 text-emerald-600 mb-2" />
+              <p className="text-xs text-gray-500 font-medium">Model Year</p>
+              <p className="text-base font-bold text-gray-900">{machine.year || '2021'}</p>
             </div>
-            <div className="bg-surface rounded-2xl p-4 border border-gray-100">
-              <WrenchIcon className="w-5 h-5 text-primary mb-2" />
-              <p className="text-sm text-gray-600">Drive Type</p>
-              <p className="text-lg font-bold text-gray-900">4WD</p>
+            <div className="bg-surface rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <WrenchIcon className="w-5 h-5 text-emerald-600 mb-2" />
+              <p className="text-xs text-gray-500 font-medium">Drive Type</p>
+              <p className="text-base font-bold text-gray-900">{machine.drive_type || '4WD'}</p>
             </div>
           </div>
         </div>
@@ -180,39 +238,38 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
           </div>
         )}
 
-        {/* Fuel Estimator - Rule-Based Logic */}
+        {/* Fuel Estimator - Dynamic Logic */}
         <SmartEstimateCard title="Fuel Cost Estimator" variant="amber">
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Enter Area (Acres)
+              <label className="block text-xs font-bold text-gray-900 mb-1">
+                Enter Field Area (Acres)
               </label>
               <input
                 type="number"
                 value={acres}
                 onChange={(e) => setAcres(e.target.value)}
-                className="w-full h-12 px-4 border-2 border-gray-200 rounded-2xl font-semibold focus:border-primary focus:outline-none"
+                className="w-full h-11 px-4 border-2 border-amber-200 rounded-xl font-bold text-gray-900 bg-white focus:border-amber-500 focus:outline-none"
                 placeholder="5" />
-              
             </div>
-            <div className="bg-white rounded-xl p-4 space-y-2">
+            <div className="bg-white rounded-xl p-4 space-y-2 border border-amber-100 shadow-sm">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Estimated Diesel</span>
+                <span className="text-xs text-gray-600">Estimated Diesel</span>
                 <span className="font-bold text-gray-900">
-                  {estimatedFuel.toFixed(1)} L
+                  {estimatedFuel.toFixed(1)} Liters
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">
-                  Fuel Cost (@₹95/L)
+                <span className="text-xs text-gray-600">
+                  Estimated Fuel Cost (@₹95/L)
                 </span>
-                <span className="font-bold text-earth-terracotta">
+                <span className="font-bold text-amber-700">
                   ₹{fuelCost.toFixed(0)}
                 </span>
               </div>
             </div>
             <p className="text-xs text-gray-600 italic">
-              Formula: 2.5 L/acre for ploughing operation
+              Formula: ~{litersPerAcre.toFixed(1)} L/acre for {machine.hp ? machine.hp + ' HP' : '47 HP'} tractor operation
             </p>
           </div>
         </SmartEstimateCard>
@@ -222,26 +279,23 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
           <h2 className="text-lg font-bold text-gray-900 mb-3">Location</h2>
           <div className="bg-surface rounded-2xl p-4 border border-gray-100">
             <div className="flex items-center gap-2 mb-2">
-              <MapPinIcon className="w-5 h-5 text-primary" />
+              <MapPinIcon className="w-5 h-5 text-emerald-600" />
               <span className="font-semibold text-gray-900">
-                {machine.village || 'Anandpur, Kheda'}
+                {machine.village ? `${machine.village}, ${machine.district || ''}` : 'Anandpur, Kheda'}
               </span>
             </div>
             <p className="text-sm text-gray-600 mb-3">
               {machine.distance_km ? `${machine.distance_km} km from your location` : 'Location verified'}
             </p>
-            <div className="h-32 bg-gradient-to-br from-green-50 to-amber-50 rounded-xl flex items-center justify-center">
-              <span className="text-4xl">🗺️</span>
-            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom CTA */}
       <div className="fixed bottom-20 left-0 right-0 p-4 bg-surface border-t border-gray-200">
-        <Link to="/seeker/availability" state={{ machine }}>
+        <Link to="/seeker/availability" state={{ machine, selectedRateType, ratePrice: getSelectedPrice() }}>
           <Button fullWidth size="lg">
-            Check Availability
+            Check Availability (₹{getSelectedPrice()}/{selectedRateType})
           </Button>
         </Link>
       </div>

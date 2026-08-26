@@ -84,10 +84,7 @@ export function MachineDetailTools({ initialMachine }: { initialMachine?: Equipm
           <h2 className="text-lg font-bold text-gray-900 mb-3">Description</h2>
           <div className="bg-surface rounded-2xl p-4 border border-gray-100">
             <p className="text-base text-gray-700 leading-relaxed">
-              High-quality manual seed drill suitable for wheat, mustard, and
-              other small seeds. 8-row capacity with adjustable seed spacing.
-              Lightweight and easy to operate. Perfect for small to medium-sized
-              farms.
+              {machine.description || "High-quality agricultural tool suitable for farm operations. Lightweight and easy to operate."}
             </p>
           </div>
         </div>

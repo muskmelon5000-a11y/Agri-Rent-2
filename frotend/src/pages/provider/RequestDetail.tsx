@@ -18,7 +18,7 @@ export function RequestDetail() {
     async function loadBooking() {
       if (!id) return;
       try {
-        const data = await bookingService.getById(parseInt(id));
+        const data = await bookingService.getById(id);
         setBooking(data);
       } catch (error) {
         console.error("Failed to load booking:", error);
