@@ -304,9 +304,9 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-20 left-0 right-0 p-4 bg-surface border-t border-gray-200">
+      <div className="sticky bottom-0 left-0 right-0 p-4 bg-surface border-t border-gray-200 z-30 shadow-lg mt-auto">
         <Link to="/seeker/availability" state={{ machine, selectedRateType, ratePrice: getSelectedPrice() }}>
-          <Button fullWidth size="lg">
+          <Button fullWidth size="lg" className="bg-emerald-600 hover:bg-emerald-700 font-bold text-white shadow-md">
             Check Availability (₹{getSelectedPrice()}/{selectedRateType})
           </Button>
         </Link>

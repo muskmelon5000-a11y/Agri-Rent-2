@@ -177,10 +177,10 @@ export function MachineDetailTools({ initialMachine }: { initialMachine?: Equipm
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-20 left-0 right-0 p-4 bg-surface border-t border-gray-200">
-        <Link to="/seeker/availability" state={{ machine }}>
-          <Button fullWidth size="lg">
-            Check Availability
+      <div className="sticky bottom-0 left-0 right-0 p-4 bg-surface border-t border-gray-200 z-30 shadow-lg mt-auto">
+        <Link to="/seeker/availability" state={{ machine, ratePrice: machine.price_per_day, selectedRateType: 'day' }}>
+          <Button fullWidth size="lg" className="bg-emerald-600 hover:bg-emerald-700 font-bold text-white shadow-md">
+            Check Availability & Book Implement
           </Button>
         </Link>
       </div>

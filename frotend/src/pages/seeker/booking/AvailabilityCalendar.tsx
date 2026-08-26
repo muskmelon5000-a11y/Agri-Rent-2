@@ -17,10 +17,25 @@ export function AvailabilityCalendar() {
   
   // Get machine details from state or use defaults
   const machine = location.state?.machine;
-  const equipmentId = machine?.id || 1;
-  const price = machine?.price_per_day || 1200;
-  const name = machine?.name || "Mahindra 575 DI";
-  const image = machine?.images?.[0] || "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=200";
+  const equipmentId = machine?.id;
+  const ratePrice = location.state?.ratePrice;
+  const selectedRateType = location.state?.selectedRateType || 'day';
+  const price = ratePrice || machine?.price_per_day || 1200;
+  const name = machine?.name || "Agricultural Drone";
+
+  let image = "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=200";
+  if (machine?.images) {
+    if (Array.isArray(machine.images)) {
+      image = machine.images[0] || image;
+    } else if (typeof machine.images === 'string') {
+      try {
+        const parsed = JSON.parse(machine.images);
+        if (Array.isArray(parsed) && parsed.length > 0) image = parsed[0];
+      } catch (e) {
+        if (machine.images.startsWith("http")) image = machine.images;
+      }
+    }
+  }
 
   const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
   
