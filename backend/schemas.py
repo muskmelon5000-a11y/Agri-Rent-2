@@ -123,16 +123,16 @@ class UserOut(UserBase):
 
 class EquipmentBase(BaseModel):
     name: str
-    type: str
+    type: str = "tractor"
     brand: Optional[str] = None
     model: Optional[str] = None
     hp: Optional[int] = None
     year: Optional[int] = None
     description: Optional[str] = None
-    price_per_day: float
+    price_per_day: float = 1200.0
     price_per_hour: Optional[float] = None
-    latitude: float
-    longitude: float
+    latitude: float = 23.0225
+    longitude: float = 72.5714
     village: Optional[str] = None
     district: Optional[str] = None
     is_available: bool = True

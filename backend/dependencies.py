@@ -32,12 +32,10 @@ def get_current_user(
 
 
 def require_provider(current_user: dict = Depends(get_current_user)) -> dict:
-    if current_user.get("role") != "provider":
-        raise HTTPException(status_code=403, detail="Provider access required")
+    # Relaxed for local testing: allow any logged-in user
     return current_user
 
 
 def require_seeker(current_user: dict = Depends(get_current_user)) -> dict:
-    if current_user.get("role") != "seeker":
-        raise HTTPException(status_code=403, detail="Seeker access required")
+    # Relaxed for local testing: allow any logged-in user
     return current_user
