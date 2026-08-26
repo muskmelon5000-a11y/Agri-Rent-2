@@ -17,6 +17,19 @@ export function MachineDetailTools({ initialMachine }: { initialMachine?: Equipm
   if (!machine) {
     return <div className="min-h-full bg-background pb-20 flex items-center justify-center">Machine not found.</div>;
   }
+  let toolImages: string[] = [];
+  if (Array.isArray(machine.images)) {
+    toolImages = machine.images;
+  } else if (typeof machine.images === 'string') {
+    try {
+      const parsed = JSON.parse(machine.images);
+      toolImages = Array.isArray(parsed) ? parsed : [machine.images];
+    } catch (e) {
+      if ((machine.images as string).startsWith("http")) toolImages = [machine.images as string];
+    }
+  }
+  const primaryToolImage = toolImages[0] || 'https://images.unsplash.com/photo-1416339442236-8ceb164046f8?w=800';
+
   return (
     <div className="min-h-full bg-background pb-20">
       <AppHeader title="Tool Details" showBack />
@@ -24,7 +37,7 @@ export function MachineDetailTools({ initialMachine }: { initialMachine?: Equipm
       {/* Image */}
       <div className="relative bg-gray-950 flex items-center justify-center h-80 overflow-hidden">
         <img
-          src={machine.images ? (JSON.parse(machine.images)[0] || 'https://images.unsplash.com/photo-1416339442236-8ceb164046f8?w=800') : 'https://images.unsplash.com/photo-1416339442236-8ceb164046f8?w=800'}
+          src={primaryToolImage}
           alt={machine.name}
           className={`w-full h-full transition-all duration-300 ${
             imageFit === 'contain' ? 'object-contain p-2' : 'object-cover object-center'

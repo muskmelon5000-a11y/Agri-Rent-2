@@ -57,7 +57,20 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
     return <div className="min-h-full bg-background pb-20 flex items-center justify-center">Machine not found.</div>;
   }
 
-  const machineImages = machine.images?.length ? machine.images : images;
+  let machineImages: string[] = [];
+  if (Array.isArray(machine.images)) {
+    machineImages = machine.images;
+  } else if (typeof machine.images === 'string') {
+    try {
+      const parsed = JSON.parse(machine.images);
+      machineImages = Array.isArray(parsed) ? parsed : [machine.images];
+    } catch (e) {
+      if ((machine.images as string).startsWith("http")) machineImages = [machine.images as string];
+    }
+  }
+  if (machineImages.length === 0) {
+    machineImages = images;
+  }
 
   // Dynamic Fuel Calculation based on tractor HP
   const hpVal = machine.hp || 47;

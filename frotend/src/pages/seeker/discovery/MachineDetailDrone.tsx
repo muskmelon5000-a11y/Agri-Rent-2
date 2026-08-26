@@ -26,6 +26,19 @@ export function MachineDetailDrone({ initialMachine }: { initialMachine?: Equipm
   const coveragePerBattery = 2.5;
   const batteriesNeeded = Math.ceil(Number(acres) / coveragePerBattery);
   const timeEstimate = batteriesNeeded * 15;
+  let droneImages: string[] = [];
+  if (Array.isArray(machine.images)) {
+    droneImages = machine.images;
+  } else if (typeof machine.images === 'string') {
+    try {
+      const parsed = JSON.parse(machine.images);
+      droneImages = Array.isArray(parsed) ? parsed : [machine.images];
+    } catch (e) {
+      if ((machine.images as string).startsWith("http")) droneImages = [machine.images as string];
+    }
+  }
+  const primaryDroneImage = droneImages[0] || 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800';
+
   return (
     <div className="min-h-full bg-background pb-20">
       <AppHeader title="Drone Details" showBack />
@@ -33,7 +46,7 @@ export function MachineDetailDrone({ initialMachine }: { initialMachine?: Equipm
       {/* Image */}
       <div className="relative bg-gray-950 flex items-center justify-center h-80 overflow-hidden">
         <img
-          src={machine.images ? (JSON.parse(machine.images)[0] || 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800') : 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800'}
+          src={primaryDroneImage}
           alt={machine.name}
           className={`w-full h-full transition-all duration-300 ${
             imageFit === 'contain' ? 'object-contain p-2' : 'object-cover object-center'

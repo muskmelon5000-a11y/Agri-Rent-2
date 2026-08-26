@@ -53,14 +53,15 @@ import { AppSettings } from './pages/settings/AppSettings';
 import { LanguageSettings } from './pages/settings/LanguageSettings';
 import { LogoutScreen } from './pages/settings/LogoutScreen';
 import { FeedbackRating } from './pages/settings/FeedbackRating';
-import { AuthProvider } from './context/AuthContext';
+import { ErrorBoundary } from './components/shared/ErrorBoundary';
 
 export function App() {
   return (
     <HashRouter>
       <AuthProvider>
         <PhoneFrame>
-          <Routes>
+          <ErrorBoundary>
+            <Routes>
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/splash" replace />} />
 
@@ -133,9 +134,9 @@ export function App() {
           <Route path="/language-settings" element={<LanguageSettings />} />
           <Route path="/logout" element={<LogoutScreen />} />
           <Route path="/feedback" element={<FeedbackRating />} />
-        </Routes>
-      </PhoneFrame>
+          </Routes>
+          </ErrorBoundary>
+        </PhoneFrame>
       </AuthProvider>
     </HashRouter>);
-
 }
