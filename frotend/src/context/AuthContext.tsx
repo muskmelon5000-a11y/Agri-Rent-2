@@ -70,6 +70,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (!user && !isPublic && location.pathname !== '/') {
       navigate('/login');
+    } else if (user && (location.pathname === '/login' || location.pathname === '/splash')) {
+      navigate(user.role === 'provider' ? '/provider/dashboard' : '/seeker/home');
     }
   }, [user, location.pathname, isLoading, navigate]);
 

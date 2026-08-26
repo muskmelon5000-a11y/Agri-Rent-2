@@ -55,6 +55,17 @@ import { LogoutScreen } from './pages/settings/LogoutScreen';
 import { FeedbackRating } from './pages/settings/FeedbackRating';
 import { ErrorBoundary } from './components/shared/ErrorBoundary';
 
+import { useAuth } from './context/AuthContext';
+
+function RootRedirect() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) {
+    return <div className="h-full bg-background flex items-center justify-center p-6 text-gray-500">Loading...</div>;
+  }
+  if (!user) return <Navigate to="/login" replace />;
+  return <Navigate to={user.role === 'provider' ? '/provider/dashboard' : '/seeker/home'} replace />;
+}
+
 export function App() {
   return (
     <HashRouter>
@@ -62,8 +73,8 @@ export function App() {
         <PhoneFrame>
           <ErrorBoundary>
             <Routes>
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/splash" replace />} />
+          {/* Default redirect based on auth */}
+          <Route path="/" element={<RootRedirect />} />
 
           {/* Auth */}
           <Route path="/splash" element={<SplashScreen />} />
