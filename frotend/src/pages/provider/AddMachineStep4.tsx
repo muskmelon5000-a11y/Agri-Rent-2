@@ -108,18 +108,30 @@ export function AddMachineStep4() {
     try {
       setIsSubmitting(true);
       
-      const payload: EquipmentCreate = {
-        ...equipmentData,
-        latitude: locationState.lat,
-        longitude: locationState.lng,
+      const payload: any = {
+        name: equipmentData.name || "Equipment",
+        type: equipmentData.type || "tractor",
+        brand: equipmentData.brand || undefined,
+        model: equipmentData.model || undefined,
+        hp: equipmentData.hp ? parseInt(String(equipmentData.hp)) : undefined,
+        year: equipmentData.year ? parseInt(String(equipmentData.year)) : undefined,
+        description: equipmentData.description || undefined,
+        price_per_day: parseFloat(String(equipmentData.price_per_day)) || 1200,
+        price_per_hour: equipmentData.price_per_hour ? parseFloat(String(equipmentData.price_per_hour)) : undefined,
+        latitude: Number(locationState.lat) || 23.0225,
+        longitude: Number(locationState.lng) || 72.5714,
         village: (locationState as any).village || user?.village || "Anandpur",
-        district: (locationState as any).district || user?.district || "Kheda"
+        district: (locationState as any).district || user?.district || "Kheda",
+        is_available: true,
+        images: typeof equipmentData.images === 'string' ? equipmentData.images : JSON.stringify(equipmentData.images || ["https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800"]),
+        attachments: typeof equipmentData.attachments === 'string' ? equipmentData.attachments : JSON.stringify(equipmentData.attachments || [])
       };
 
       await equipmentService.create(payload);
       navigate('/provider/equipment');
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create equipment:", error);
+      alert("Failed to publish equipment: " + (error.response?.data?.detail || error.message || "Server Error"));
     } finally {
       setIsSubmitting(false);
     }
