@@ -18,6 +18,7 @@ import {
 export function MachineDetailDrone({ initialMachine }: { initialMachine?: Equipment }) {
   const [machine] = useState<Equipment | null>(initialMachine || null);
   const [acres, setAcres] = useState('10');
+  const [imageFit, setImageFit] = useState<'cover' | 'contain'>('cover');
   
   if (!machine) {
     return <div className="min-h-full bg-background pb-20 flex items-center justify-center">Machine not found.</div>;
@@ -30,13 +31,25 @@ export function MachineDetailDrone({ initialMachine }: { initialMachine?: Equipm
       <AppHeader title="Drone Details" showBack />
 
       {/* Image */}
-      <div className="relative">
+      <div className="relative bg-gray-950 flex items-center justify-center h-80 overflow-hidden">
         <img
           src={machine.images ? (JSON.parse(machine.images)[0] || 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800') : 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800'}
           alt={machine.name}
-          className="w-full h-72 object-cover" />
+          className={`w-full h-full transition-all duration-300 ${
+            imageFit === 'contain' ? 'object-contain p-2' : 'object-cover object-center'
+          }`}
+        />
         
-        <Badge variant="success" className="absolute top-4 right-4">
+        {/* Fit/Fill Toggle Button */}
+        <button
+          type="button"
+          onClick={() => setImageFit(prev => prev === 'cover' ? 'contain' : 'cover')}
+          className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/20 shadow hover:bg-black/80 transition"
+        >
+          {imageFit === 'cover' ? '🔍 Fit Full Photo' : '🔎 Fill Banner'}
+        </button>
+        
+        <Badge variant="success" className="absolute top-4 right-4 z-10">
           Available Now
         </Badge>
       </div>

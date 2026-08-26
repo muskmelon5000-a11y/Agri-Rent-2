@@ -95,7 +95,7 @@ export function AddMachineStep2() {
                   <img
                     src={images[0]}
                     alt="Uploaded Primary"
-                    className="absolute inset-0 w-full h-full object-cover" />
+                    className="absolute inset-0 w-full h-full object-contain p-2 bg-gray-950/90 rounded-2xl" />
                   <button 
                     onClick={(e) => { e.stopPropagation(); removeImage(0); }}
                     className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full z-10 hover:bg-red-600">

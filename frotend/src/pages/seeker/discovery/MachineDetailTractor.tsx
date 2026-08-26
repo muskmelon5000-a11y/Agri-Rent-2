@@ -25,6 +25,7 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
   const [machine, setMachine] = useState<Equipment | null>(initialMachine || null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
+  const [imageFit, setImageFit] = useState<'cover' | 'contain'>('cover');
   const [acres, setAcres] = useState('5');
   const [selectedRateType, setSelectedRateType] = useState<'hour' | 'day' | 'acre'>('day');
 
@@ -79,22 +80,33 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
       <AppHeader title="Tractor Details" showBack />
 
       {/* Image Gallery */}
-      <div className="relative">
+      <div className="relative bg-gray-950 flex items-center justify-center h-80 overflow-hidden">
         <img
           src={machineImages[currentImage]}
           alt={machine.name}
-          className="w-full h-72 object-cover" />
+          className={`w-full h-full transition-all duration-300 ${
+            imageFit === 'contain' ? 'object-contain p-2' : 'object-cover object-center'
+          }`}
+        />
         
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        {/* Fit/Fill Toggle Button */}
+        <button
+          type="button"
+          onClick={() => setImageFit(prev => prev === 'cover' ? 'contain' : 'cover')}
+          className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/20 shadow hover:bg-black/80 transition"
+        >
+          {imageFit === 'cover' ? '🔍 Fit Full Photo' : '🔎 Fill Banner'}
+        </button>
+
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {machineImages.map((_, idx) =>
           <button
             key={idx}
             onClick={() => setCurrentImage(idx)}
-            className={`w-2 h-2 rounded-full transition-all ${idx === currentImage ? 'bg-white w-6' : 'bg-white/50'}`} />
-
+            className={`h-2 rounded-full transition-all ${idx === currentImage ? 'bg-white w-6' : 'bg-white/50 w-2'}`} />
           )}
         </div>
-        <Badge variant={machine.is_available ? "success" : "neutral"} className="absolute top-4 right-4">
+        <Badge variant={machine.is_available ? "success" : "neutral"} className="absolute top-4 right-4 z-10">
           {machine.is_available ? "Available Now" : "Currently Rented"}
         </Badge>
       </div>
