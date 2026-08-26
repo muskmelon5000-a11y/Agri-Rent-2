@@ -19,15 +19,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function initAuth() {
+      const storedUser = authService.getStoredUser();
       const token = localStorage.getItem('agrirent_token');
+      
+      if (storedUser) {
+        setUser(storedUser);
+      }
+      
       if (token) {
         try {
           const fullUser = await authService.getMe();
-          setUser(fullUser);
+          const updatedUser = { ...fullUser, access_token: token };
+          setUser(updatedUser);
+          localStorage.setItem('agrirent_user', JSON.stringify(updatedUser));
         } catch (error) {
-          console.error("Session expired or invalid", error);
-          authService.logout();
-          setUser(null);
+          console.warn("Session token validation failed:", error);
+          if (!storedUser) {
+            authService.logout();
+            setUser(null);
+          }
         }
       }
       setIsLoading(false);
