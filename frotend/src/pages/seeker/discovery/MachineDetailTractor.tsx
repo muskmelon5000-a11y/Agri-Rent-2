@@ -78,9 +78,10 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
   const estimatedFuel = (parseFloat(acres) || 0) * litersPerAcre;
   const fuelCost = estimatedFuel * 95;
 
-  const perHourRate = machine.price_per_hour || Math.round(machine.price_per_day / 8);
-  const perDayRate = machine.price_per_day;
-  const perAcreRate = Math.round(machine.price_per_day * 0.7);
+  const dayPrice = Number(machine.price_per_day) || 1200;
+  const perHourRate = Number(machine.price_per_hour) || Math.round(dayPrice / 8);
+  const perDayRate = dayPrice;
+  const perAcreRate = Math.round(dayPrice * 0.7);
 
   const getSelectedPrice = () => {
     if (selectedRateType === 'hour') return perHourRate;
@@ -90,7 +91,7 @@ export function MachineDetailTractor({ initialMachine }: { initialMachine?: Equi
 
   return (
     <div className="min-h-full bg-background pb-20">
-      <AppHeader title="Tractor Details" showBack />
+      <AppHeader title={machine.type === 'harvester' ? "Harvester Details" : "Tractor Details"} showBack />
 
       {/* Image Gallery */}
       <div className="relative bg-gray-950 flex items-center justify-center h-80 overflow-hidden">
