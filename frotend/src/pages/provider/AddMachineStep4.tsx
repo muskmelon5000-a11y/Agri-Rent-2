@@ -51,24 +51,56 @@ export function AddMachineStep4() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [locationState, setLocationState] = useState({ lat: 22.3, lng: 73.1, status: 'idle' });
 
-  const handleGetLocation = () => {
+  const handleGetLocation = async () => {
     setLocationState(prev => ({ ...prev, status: 'loading' }));
+
+    const reverseGeocode = async (lat: number, lng: number) => {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+        const data = await res.json();
+        const address = data.address || {};
+        const village = address.village || address.suburb || address.town || address.city || "Local Area";
+        const district = address.state_district || address.county || address.state || "District";
+        return { village, district };
+      } catch (err) {
+        return { village: user?.village || "Local Area", district: user?.district || "District" };
+      }
+    };
+
+    const applyLocation = async (lat: number, lng: number) => {
+      const geoInfo = await reverseGeocode(lat, lng);
+      setLocationState({
+        lat,
+        lng,
+        status: 'success',
+        village: geoInfo.village,
+        district: geoInfo.district
+      } as any);
+    };
+
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocationState({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            status: 'success'
-          });
+        async (position) => {
+          await applyLocation(position.coords.latitude, position.coords.longitude);
         },
-        (error) => {
-          console.error("Error getting location", error);
-          setLocationState(prev => ({ ...prev, status: 'error' }));
-        }
+        async (error) => {
+          console.warn("Browser GPS failed or denied, trying IP geolocation fallback...", error);
+          try {
+            const ipRes = await fetch('https://ipapi.co/json/');
+            const ipData = await ipRes.json();
+            if (ipData.latitude && ipData.longitude) {
+              await applyLocation(ipData.latitude, ipData.longitude);
+            } else {
+              await applyLocation(23.0225, 72.5714);
+            }
+          } catch (e) {
+            await applyLocation(23.0225, 72.5714);
+          }
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
       );
     } else {
-      setLocationState(prev => ({ ...prev, status: 'error' }));
+      await applyLocation(23.0225, 72.5714);
     }
   };
 
@@ -80,8 +112,8 @@ export function AddMachineStep4() {
         ...equipmentData,
         latitude: locationState.lat,
         longitude: locationState.lng,
-        village: user?.village || "Unknown",
-        district: user?.district || "Unknown"
+        village: (locationState as any).village || user?.village || "Anandpur",
+        district: (locationState as any).district || user?.district || "Kheda"
       };
 
       await equipmentService.create(payload);

@@ -71,19 +71,36 @@ export function SearchResultsMap() {
     terrain: 'https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
   };
 
-  const requestLocation = () => {
+  const requestLocation = async () => {
+    const applyLoc = (lat: number, lng: number) => {
+      const loc = { lat, lng };
+      setMapCenter(loc);
+      setSearchCenter(loc);
+    };
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          setMapCenter(loc);
-          setSearchCenter(loc);
+          applyLoc(pos.coords.latitude, pos.coords.longitude);
         },
-        (err) => {
-          console.log("GPS denied, using default location");
-          alert("Could not get your location. Please check browser permissions.");
-        }
+        async (err) => {
+          console.warn("GPS denied/timed out, using IP location fallback...", err);
+          try {
+            const ipRes = await fetch('https://ipapi.co/json/');
+            const ipData = await ipRes.json();
+            if (ipData.latitude && ipData.longitude) {
+              applyLoc(ipData.latitude, ipData.longitude);
+            } else {
+              applyLoc(23.0225, 72.5714);
+            }
+          } catch (e) {
+            applyLoc(23.0225, 72.5714);
+          }
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
       );
+    } else {
+      applyLoc(23.0225, 72.5714);
     }
   };
 
