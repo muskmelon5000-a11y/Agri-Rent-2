@@ -98,6 +98,7 @@ class UserBase(BaseModel):
     village: Optional[str] = None
     district: Optional[str] = None
     state: Optional[str] = None
+    phone: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     profile_image: Optional[str] = None

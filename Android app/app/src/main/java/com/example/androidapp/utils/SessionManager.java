@@ -10,6 +10,10 @@ public class SessionManager {
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_ROLE = "user_role";
     private static final String KEY_NAME = "user_name";
+    private static final String KEY_PHONE = "user_phone";
+    private static final String KEY_VILLAGE = "user_village";
+    private static final String KEY_DISTRICT = "user_district";
+    private static final String KEY_PROFILE_IMAGE = "user_profile_image";
 
     private final SharedPreferences pref;
     private final SharedPreferences.Editor editor;
@@ -27,6 +31,15 @@ public class SessionManager {
         editor.apply();
     }
 
+    public void saveUserDetails(String name, String phone, String village, String district, String profileImage) {
+        if (name != null) editor.putString(KEY_NAME, name);
+        if (phone != null) editor.putString(KEY_PHONE, phone);
+        if (village != null) editor.putString(KEY_VILLAGE, village);
+        if (district != null) editor.putString(KEY_DISTRICT, district);
+        if (profileImage != null) editor.putString(KEY_PROFILE_IMAGE, profileImage);
+        editor.apply();
+    }
+
     public String getToken() {
         return pref.getString(KEY_TOKEN, null);
     }
@@ -41,6 +54,22 @@ public class SessionManager {
 
     public String getName() {
         return pref.getString(KEY_NAME, null);
+    }
+
+    public String getPhone() {
+        return pref.getString(KEY_PHONE, null);
+    }
+
+    public String getVillage() {
+        return pref.getString(KEY_VILLAGE, null);
+    }
+
+    public String getDistrict() {
+        return pref.getString(KEY_DISTRICT, null);
+    }
+
+    public String getProfileImage() {
+        return pref.getString(KEY_PROFILE_IMAGE, null);
     }
 
     public boolean isLoggedIn() {

@@ -27,6 +27,9 @@ public class UserOut {
     @SerializedName("district")
     private String district;
 
+    @SerializedName("profile_image")
+    private String profileImage;
+
     @SerializedName("skill_points")
     private int skillPoints;
 
@@ -54,6 +57,9 @@ public class UserOut {
 
     public String getDistrict() { return district; }
     public void setDistrict(String district) { this.district = district; }
+
+    public String getProfileImage() { return profileImage; }
+    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
 
     public int getSkillPoints() { return skillPoints; }
     public void setSkillPoints(int skillPoints) { this.skillPoints = skillPoints; }

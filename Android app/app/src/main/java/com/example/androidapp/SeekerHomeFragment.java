@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.androidapp.adapters.EquipmentAdapter;
 import com.example.androidapp.databinding.FragmentSeekerHomeBinding;
 import com.example.androidapp.models.Equipment;
+import com.example.androidapp.models.UserOut;
 import com.example.androidapp.network.RetrofitClient;
 import com.example.androidapp.utils.SessionManager;
 
@@ -50,9 +51,9 @@ public class SeekerHomeFragment extends Fragment {
 
         sessionManager = new SessionManager(requireContext());
         
-        // Welcome and location fallbacks matching website
-        binding.tvWelcomeUser.setText(sessionManager.getName() != null ? sessionManager.getName().split(" ")[0] : "Farmer");
-        binding.tvUserLocation.setText("Anandpur, Kheda District");
+        // Dynamically populate user welcome and location
+        updateUserHeader();
+        loadUserProfile();
 
         setupRecyclerView();
         setupCategorySpinner();
@@ -113,10 +114,11 @@ public class SeekerHomeFragment extends Fragment {
         binding.btnResetFilters.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetAllFilters();
+                resetFilters();
             }
         });
 
+        // Search Input Handling
         binding.etSearchQuery.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -128,6 +130,74 @@ public class SeekerHomeFragment extends Fragment {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUserHeader();
+        loadUserProfile();
+    }
+
+    private void updateUserHeader() {
+        if (binding == null) return;
+        String name = sessionManager.getName();
+        binding.tvWelcomeUser.setText(name != null && !name.isEmpty() ? name.split(" ")[0] : "Farmer");
+
+        String village = sessionManager.getVillage();
+        String district = sessionManager.getDistrict();
+        String loc = "";
+        if (village != null && !village.isEmpty()) {
+            loc += village;
+        }
+        if (district != null && !district.isEmpty()) {
+            if (!loc.isEmpty()) loc += ", ";
+            loc += district + " District";
+        }
+        if (loc.isEmpty()) {
+            loc = "Location not set";
+        }
+        binding.tvUserLocation.setText(loc);
+    }
+
+    private void loadUserProfile() {
+        String authToken = "Bearer " + sessionManager.getToken();
+        RetrofitClient.getApiService().getMe(authToken).enqueue(new Callback<UserOut>() {
+            @Override
+            public void onResponse(Call<UserOut> call, Response<UserOut> response) {
+                if (isAdded() && response.isSuccessful() && response.body() != null) {
+                    UserOut user = response.body();
+                    String village = user.getVillage() != null ? user.getVillage() : "";
+                    String district = user.getDistrict() != null ? user.getDistrict() : "";
+                    sessionManager.saveUserDetails(user.getName(), user.getPhone(), village, district, user.getProfileImage());
+                    updateUserHeader();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserOut> call, Throwable t) {}
+        });
+    }
+
+    private void setupCategorySpinner() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                CATEGORIES
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerCategory.setAdapter(adapter);
+    }
+
+    private void filterByCategory(String category) {
+        binding.layoutFilters.setVisibility(View.VISIBLE);
+        for (int i = 0; i < CATEGORIES.length; i++) {
+            if (CATEGORIES[i].equalsIgnoreCase(category)) {
+                binding.spinnerCategory.setSelection(i);
+                break;
+            }
+        }
+        applyCurrentFilters();
     }
 
     private void setupRecyclerView() {
@@ -143,79 +213,46 @@ public class SeekerHomeFragment extends Fragment {
         binding.rvEquipment.setAdapter(adapter);
     }
 
-    private void setupCategorySpinner() {
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_item, CATEGORIES);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinnerCategory.setAdapter(spinnerAdapter);
-    }
-
-    private void filterByCategory(String catName) {
-        for (int i = 0; i < CATEGORIES.length; i++) {
-            if (CATEGORIES[i].equalsIgnoreCase(catName)) {
-                binding.spinnerCategory.setSelection(i);
-                break;
-            }
-        }
-        applyCurrentFilters();
-    }
-
     private void applyCurrentFilters() {
-        String searchQuery = binding.etSearchQuery.getText().toString().trim();
-        if (searchQuery.isEmpty()) searchQuery = null;
-
-        String selectedCat = binding.spinnerCategory.getSelectedItem().toString().toLowerCase();
-        if ("all".equals(selectedCat)) {
-            selectedCat = null;
-        }
+        String query = binding.etSearchQuery.getText().toString().trim();
+        String selectedCategory = binding.spinnerCategory.getSelectedItem().toString();
+        String category = "All".equalsIgnoreCase(selectedCategory) ? null : selectedCategory;
 
         Double minPrice = null;
-        String minStr = binding.etMinPrice.getText().toString().trim();
-        if (!minStr.isEmpty()) {
-            try {
-                minPrice = Double.parseDouble(minStr);
-            } catch (NumberFormatException ignored) {}
+        String minPriceStr = binding.etMinPrice.getText().toString().trim();
+        if (!TextUtils.isEmpty(minPriceStr)) {
+            try { minPrice = Double.parseDouble(minPriceStr); } catch (NumberFormatException ignored) {}
         }
 
         Double maxPrice = null;
-        String maxStr = binding.etMaxPrice.getText().toString().trim();
-        if (!maxStr.isEmpty()) {
-            try {
-                maxPrice = Double.parseDouble(maxStr);
-            } catch (NumberFormatException ignored) {}
+        String maxPriceStr = binding.etMaxPrice.getText().toString().trim();
+        if (!TextUtils.isEmpty(maxPriceStr)) {
+            try { maxPrice = Double.parseDouble(maxPriceStr); } catch (NumberFormatException ignored) {}
         }
 
-        double radius = 20.0;
-        String radiusStr = binding.etRadius.getText().toString().trim();
-        if (!radiusStr.isEmpty()) {
-            try {
-                radius = Double.parseDouble(radiusStr);
-            } catch (NumberFormatException ignored) {}
-        }
-
-        binding.layoutFilters.setVisibility(View.GONE);
-        loadNearbyEquipment(searchQuery, selectedCat, minPrice, radius, maxPrice);
+        loadNearbyEquipment(query.isEmpty() ? null : query, category, minPrice, 20.0, maxPrice);
     }
 
-    private void resetAllFilters() {
+    private void resetFilters() {
         binding.etSearchQuery.setText("");
         binding.spinnerCategory.setSelection(0);
         binding.etMinPrice.setText("");
         binding.etMaxPrice.setText("");
-        binding.etRadius.setText("20");
-        binding.layoutFilters.setVisibility(View.GONE);
         loadNearbyEquipment(null, null, null, 20.0, null);
     }
 
-    private void loadNearbyEquipment(String query, String category, Double minPrice, double radius, Double maxPrice) {
+    private void loadNearbyEquipment(String query, String category, Double minPrice, Double radiusKm, Double maxPrice) {
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.tvEmpty.setVisibility(View.GONE);
 
         String authToken = "Bearer " + sessionManager.getToken();
         
-        // Anandpur coordinates
+        // Location coordinates for Anandpur/Ahmedabad region matching web defaults
+        double defaultLat = 23.0225;
+        double defaultLng = 72.5714;
+
         Call<List<Equipment>> call = RetrofitClient.getApiService().getNearbyEquipment(
-                23.0225, 72.5714, radius, minPrice, maxPrice, category, query, authToken
+                defaultLat, defaultLng, radiusKm, minPrice, maxPrice, category, query, authToken
         );
 
         call.enqueue(new Callback<List<Equipment>>() {
@@ -224,9 +261,9 @@ public class SeekerHomeFragment extends Fragment {
                 if (isAdded()) {
                     binding.progressBar.setVisibility(View.GONE);
                     if (response.isSuccessful() && response.body() != null) {
-                        List<Equipment> equipmentList = response.body();
-                        adapter.setItems(equipmentList);
-                        if (equipmentList.isEmpty()) {
+                        List<Equipment> items = response.body();
+                        adapter.setItems(items);
+                        if (items.isEmpty()) {
                             binding.tvEmpty.setVisibility(View.VISIBLE);
                         }
                     } else {

@@ -192,5 +192,6 @@ def get_me(current_user: dict = Depends(get_current_user)):
         "language": current_user.get("language"),
         "village": current_user.get("village"),
         "district": current_user.get("district"),
+        "profile_image": current_user.get("profile_image"),
         "skill_points": current_user.get("skill_points", 0),
     }

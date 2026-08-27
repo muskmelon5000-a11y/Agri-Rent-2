@@ -87,6 +87,12 @@ public interface ApiService {
         @Header("Authorization") String token
     );
 
+    @PUT("users/me")
+    Call<UserOut> updateProfile(
+        @Body com.example.androidapp.models.UserUpdate request,
+        @Header("Authorization") String token
+    );
+
     @GET("equipment/mine/list")
     Call<List<Equipment>> getMyEquipment(
         @Header("Authorization") String token

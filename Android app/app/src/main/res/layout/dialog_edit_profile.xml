@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:strokeWidth="0dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Title Header -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit Profile"
+                android:textColor="#111827"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Avatar Preview & Selection -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="20dp">
+
+                <RelativeLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="76dp"
+                        android:layout_height="76dp"
+                        app:cardCornerRadius="38dp"
+                        app:strokeColor="#C8E6C9"
+                        app:strokeWidth="2dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#E8F5E9">
+
+                        <TextView
+                            android:id="@+id/tvEditAvatarPreview"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="A"
+                            android:textColor="#2E7D32"
+                            android:textSize="32sp"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/btnChangePhoto"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        app:cardCornerRadius="14dp"
+                        app:strokeWidth="0dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="#2E7D32">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="📷"
+                            android:textSize="12sp" />
+                    </com.google.android.material.card.MaterialCardView>
+                </RelativeLayout>
+
+                <!-- Avatar Selection Chips (Presets: 👨‍🌾 🚜 🌾 🧑‍🌾 🧑‍💼 🌟) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Avatar Icon"
+                    android:textColor="#6B7280"
+                    android:textSize="12sp"
+                    android:layout_marginTop="8dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="6dp">
+
+                    <TextView
+                        android:id="@+id/avatarOpt1"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:gravity="center"
+                        android:text="👨‍🌾"
+                        android:textSize="20sp"
+                        android:background="?android:attr/selectableItemBackground" />
+
+                    <TextView
+                        android:id="@+id/avatarOpt2"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:text="🚜"
+                        android:textSize="20sp"
+                        android:background="?android:attr/selectableItemBackground" />
+
+                    <TextView
+                        android:id="@+id/avatarOpt3"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:text="🌾"
+                        android:textSize="20sp"
+                        android:background="?android:attr/selectableItemBackground" />
+
+                    <TextView
+                        android:id="@+id/avatarOpt4"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:text="🧑‍🌾"
+                        android:textSize="20sp"
+                        android:background="?android:attr/selectableItemBackground" />
+
+                    <TextView
+                        android:id="@+id/avatarOpt5"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:text="🌟"
+                        android:textSize="20sp"
+                        android:background="?android:attr/selectableItemBackground" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Name Input -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Name"
+                android:textColor="#374151"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/etEditName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input_outline"
+                android:hint="Your full name"
+                android:textColor="#111827"
+                android:textColorHint="#9CA3AF"
+                android:inputType="textPersonName"
+                android:paddingHorizontal="14dp"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Phone Input -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phone Number"
+                android:textColor="#374151"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/etEditPhone"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input_outline"
+                android:hint="10-digit mobile number"
+                android:textColor="#111827"
+                android:textColorHint="#9CA3AF"
+                android:inputType="phone"
+                android:paddingHorizontal="14dp"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Location Inputs Grid -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
+
+                <!-- Village -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Village"
+                        android:textColor="#374151"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/etEditVillage"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_input_outline"
+                        android:hint="e.g. Vilukanipalli"
+                        android:textColor="#111827"
+                        android:textColorHint="#9CA3AF"
+                        android:inputType="textPostalAddress"
+                        android:paddingHorizontal="12dp"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- District -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="District"
+                        android:textColor="#374151"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/etEditDistrict"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_input_outline"
+                        android:hint="e.g. Nellore"
+                        android:textColor="#111827"
+                        android:textColorHint="#9CA3AF"
+                        android:inputType="textPostalAddress"
+                        android:paddingHorizontal="12dp"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancelEdit"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:text="Cancel"
+                    android:textColor="#6B7280" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSaveProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:text="Save Changes"
+                    android:textStyle="bold"
+                    android:backgroundTint="#2E7D32"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="10dp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</com.google.android.material.card.MaterialCardView>

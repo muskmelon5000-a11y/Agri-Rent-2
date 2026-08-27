@@ -35,8 +35,7 @@ public class SeekerMainActivity extends AppCompatActivity {
                 if (itemId == R.id.nav_home) {
                     fragment = new SeekerHomeFragment();
                 } else if (itemId == R.id.nav_search) {
-                    // Open Home Fragment (which holds search & filters)
-                    fragment = new SeekerHomeFragment();
+                    fragment = new SeekerSearchFragment();
                 } else if (itemId == R.id.nav_map) {
                     // Start full screen Map Search Activity directly
                     Intent intent = new Intent(SeekerMainActivity.this, MapSearchActivity.class);
