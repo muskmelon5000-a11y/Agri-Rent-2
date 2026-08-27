@@ -1,7 +1,8 @@
 package com.example.androidapp;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,65 @@ public class ProfileFragment extends Fragment {
 
         loadUserProfile();
 
-        binding.btnLogout.setOnClickListener(new View.OnClickListener() {
+        // Switch Role Button Click
+        binding.btnSwitchRole.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String currentRole = sessionManager.getRole();
+                String targetRole = "provider".equalsIgnoreCase(currentRole) ? "seeker" : "provider";
+
+                // Update active role in shared preferences
+                SharedPreferences pref = requireContext().getSharedPreferences("AgrirentSession", Context.MODE_PRIVATE);
+                pref.edit().putString("user_role", targetRole).apply();
+
+                Toast.makeText(requireContext(), "Switched to " + 
+                        ("provider".equalsIgnoreCase(targetRole) ? "Owner (Provider)" : "Farmer (Seeker)") + " mode", 
+                        Toast.LENGTH_SHORT).show();
+
+                // Restart app on main screen based on new role
+                Intent intent;
+                if ("provider".equalsIgnoreCase(targetRole)) {
+                    intent = new Intent(requireContext(), ProviderMainActivity.class);
+                } else {
+                    intent = new Intent(requireContext(), SeekerMainActivity.class);
+                }
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                requireActivity().finish();
+            }
+        });
+
+        // Click Actions for Menu List
+        binding.cardBadges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(requireContext(), "🎖️ Skill Badges coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.cardLeaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(requireContext(), "📊 Village Leaderboard coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.cardSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(requireContext(), "⚙️ App Settings coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.cardHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(requireContext(), "❓ Help & Support coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Logout click
+        binding.cardLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sessionManager.logout();
@@ -66,26 +125,30 @@ public class ProfileFragment extends Fragment {
                     binding.progressBar.setVisibility(View.GONE);
                     if (response.isSuccessful() && response.body() != null) {
                         UserOut user = response.body();
-                        
-                        binding.tvName.setText(user.getName() != null ? user.getName() : "User");
-                        binding.tvEmail.setText(user.getEmail());
-                        binding.tvPhone.setText(user.getPhone() != null ? user.getPhone() : "Not Provided");
-                        
-                        String loc = (user.getVillage() != null ? user.getVillage() : "") + 
-                                      (user.getDistrict() != null ? ", " + user.getDistrict() : "");
-                        binding.tvLocation.setText(loc.isEmpty() ? "Not Provided" : loc);
-                        
-                        binding.tvPoints.setText(user.getSkillPoints() + " pts");
 
-                        String role = user.getRole();
+                        String name = user.getName() != null ? user.getName() : "Farmer";
+                        binding.tvName.setText(name);
+
+                        // Set initials avatar
+                        if (!name.isEmpty()) {
+                            binding.tvAvatarInitials.setText(String.valueOf(name.charAt(0)).toUpperCase());
+                        }
+
+                        binding.tvPhone.setText(user.getPhone() != null ? "+91 " + user.getPhone() : "+91 00000 00000");
+
+                        String loc = (user.getVillage() != null ? user.getVillage() : "") +
+                                (user.getDistrict() != null ? ", " + user.getDistrict() : "");
+                        binding.tvLocation.setText(loc.isEmpty() ? "Location details missing" : loc);
+
+                        binding.tvPoints.setText(String.valueOf(user.getSkillPoints()));
+
+                        String role = sessionManager.getRole();
                         if ("provider".equalsIgnoreCase(role)) {
-                            binding.tvRole.setText("Equipment Owner (Provider)");
-                            binding.tvRole.setTextColor(Color.parseColor("#0D47A1"));
-                            binding.tvRole.getBackground().setTint(Color.parseColor("#E3F2FD"));
+                            binding.tvRoleContext.setText("You are browsing as Owner (Provider)");
+                            binding.btnSwitchRole.setText("Switch to Seeker");
                         } else {
-                            binding.tvRole.setText("Farmer (Seeker)");
-                            binding.tvRole.setTextColor(Color.parseColor("#1B5E20"));
-                            binding.tvRole.getBackground().setTint(Color.parseColor("#E8F5E9"));
+                            binding.tvRoleContext.setText("You are browsing as Farmer (Seeker)");
+                            binding.btnSwitchRole.setText("Switch to Provider");
                         }
                     } else {
                         Toast.makeText(requireContext(), "Failed to load profile details", Toast.LENGTH_SHORT).show();
