@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,8 +34,7 @@ public class SeekerHomeFragment extends Fragment {
     private FragmentSeekerHomeBinding binding;
     private EquipmentAdapter adapter;
     private SessionManager sessionManager;
-
-    private static final String[] CATEGORIES = {"All", "Tractor", "Harvester", "Drone", "Implement"};
+    private String selectedCategory = null;
 
     @Nullable
     @Override
@@ -56,7 +54,6 @@ public class SeekerHomeFragment extends Fragment {
         loadUserProfile();
 
         setupRecyclerView();
-        setupCategorySpinner();
         loadNearbyEquipment(null, null, null, 20.0, null); // 20km radius default matching web
 
         binding.tvMapViewLink.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +64,7 @@ public class SeekerHomeFragment extends Fragment {
             }
         });
 
-        // Category Cards Clicks
+        // Category Cards Clicks (matching website direct category filters)
         binding.cardCatTractors.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,23 +176,13 @@ public class SeekerHomeFragment extends Fragment {
         });
     }
 
-    private void setupCategorySpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                CATEGORIES
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinnerCategory.setAdapter(adapter);
-    }
-
     private void filterByCategory(String category) {
-        binding.layoutFilters.setVisibility(View.VISIBLE);
-        for (int i = 0; i < CATEGORIES.length; i++) {
-            if (CATEGORIES[i].equalsIgnoreCase(category)) {
-                binding.spinnerCategory.setSelection(i);
-                break;
-            }
+        if (category.equalsIgnoreCase(selectedCategory)) {
+            selectedCategory = null;
+            Toast.makeText(requireContext(), "Showing all categories", Toast.LENGTH_SHORT).show();
+        } else {
+            selectedCategory = category;
+            Toast.makeText(requireContext(), "Filtered: " + category, Toast.LENGTH_SHORT).show();
         }
         applyCurrentFilters();
     }
@@ -215,8 +202,6 @@ public class SeekerHomeFragment extends Fragment {
 
     private void applyCurrentFilters() {
         String query = binding.etSearchQuery.getText().toString().trim();
-        String selectedCategory = binding.spinnerCategory.getSelectedItem().toString();
-        String category = "All".equalsIgnoreCase(selectedCategory) ? null : selectedCategory;
 
         Double minPrice = null;
         String minPriceStr = binding.etMinPrice.getText().toString().trim();
@@ -230,14 +215,21 @@ public class SeekerHomeFragment extends Fragment {
             try { maxPrice = Double.parseDouble(maxPriceStr); } catch (NumberFormatException ignored) {}
         }
 
-        loadNearbyEquipment(query.isEmpty() ? null : query, category, minPrice, 20.0, maxPrice);
+        Double radius = 20.0;
+        String radiusStr = binding.etRadius.getText().toString().trim();
+        if (!TextUtils.isEmpty(radiusStr)) {
+            try { radius = Double.parseDouble(radiusStr); } catch (NumberFormatException ignored) {}
+        }
+
+        loadNearbyEquipment(query.isEmpty() ? null : query, selectedCategory, minPrice, radius, maxPrice);
     }
 
     private void resetFilters() {
         binding.etSearchQuery.setText("");
-        binding.spinnerCategory.setSelection(0);
         binding.etMinPrice.setText("");
         binding.etMaxPrice.setText("");
+        binding.etRadius.setText("20");
+        selectedCategory = null;
         loadNearbyEquipment(null, null, null, 20.0, null);
     }
 
