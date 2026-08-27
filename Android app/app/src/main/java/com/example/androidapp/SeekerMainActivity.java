@@ -2,6 +2,7 @@ package com.example.androidapp;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -33,6 +34,14 @@ public class SeekerMainActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_home) {
                     fragment = new SeekerHomeFragment();
+                } else if (itemId == R.id.nav_search) {
+                    // Open Home Fragment (which holds search & filters)
+                    fragment = new SeekerHomeFragment();
+                } else if (itemId == R.id.nav_map) {
+                    // Start full screen Map Search Activity directly
+                    Intent intent = new Intent(SeekerMainActivity.this, MapSearchActivity.class);
+                    startActivity(intent);
+                    return false;
                 } else if (itemId == R.id.nav_bookings) {
                     fragment = new SeekerBookingsFragment();
                 } else if (itemId == R.id.nav_profile) {
