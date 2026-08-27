@@ -26,6 +26,7 @@
         app:elevation="8dp"
         app:itemIconTint="#2E7D32"
         app:itemTextColor="#2E7D32"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/seeker_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

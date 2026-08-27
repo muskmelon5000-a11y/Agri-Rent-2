@@ -26,6 +26,7 @@
         app:elevation="8dp"
         app:itemIconTint="#0B192C"
         app:itemTextColor="#0B192C"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/provider_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
