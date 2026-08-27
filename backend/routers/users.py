@@ -26,6 +26,8 @@ def update_my_profile(
     if updates:
         user_ref.update(updates)
         current_user.update(updates)
+    if "skill_points" not in current_user or current_user["skill_points"] is None:
+        current_user["skill_points"] = 0
     return current_user
 
 
