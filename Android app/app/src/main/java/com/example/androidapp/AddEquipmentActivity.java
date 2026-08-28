@@ -1,13 +1,22 @@
 package com.example.androidapp;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidapp.databinding.ActivityAddEquipmentBinding;
@@ -17,6 +26,8 @@ import com.example.androidapp.network.RetrofitClient;
 import com.example.androidapp.utils.SessionManager;
 import com.google.android.material.chip.Chip;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +50,7 @@ public class AddEquipmentActivity extends AppCompatActivity {
 
     private final List<String> selectedAttachments = new ArrayList<>();
     private String selectedPresetPhoto = "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800";
+    private ActivityResultLauncher<Intent> photoPickerLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,74 +60,61 @@ public class AddEquipmentActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(this);
 
+        setupPhotoPicker();
         setupSpinners();
         setupAttachmentChips();
         setupStep4Defaults();
         updateStepUI();
 
-        binding.btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentStep > 1) {
-                    currentStep--;
-                    updateStepUI();
-                } else {
-                    finish();
-                }
+        binding.btnBack.setOnClickListener(v -> {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepUI();
+            } else {
+                finish();
             }
         });
 
-        binding.btnPrevStep.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentStep > 1) {
-                    currentStep--;
-                    updateStepUI();
-                }
+        binding.btnPrevStep.setOnClickListener(v -> {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepUI();
             }
         });
 
-        binding.btnNextStep.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleNextOrPublish();
-            }
-        });
+        binding.btnNextStep.setOnClickListener(v -> handleNextOrPublish());
+
+        // Device Photo Selection (Gallery / Camera pick)
+        View.OnClickListener pickPhotoListener = v -> openDevicePhotoPicker();
+        binding.btnPickDevicePhoto.setOnClickListener(pickPhotoListener);
+        binding.cardPrimaryPhoto.setOnClickListener(pickPhotoListener);
 
         // Preset photos selection
-        binding.presetPhoto1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedPresetPhoto = "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800";
-                binding.tvPhotoLabel.setText("🚜 Tractor Cover Photo Selected");
-                Toast.makeText(AddEquipmentActivity.this, "Selected Tractor Cover Photo", Toast.LENGTH_SHORT).show();
-            }
+        binding.presetPhoto1.setOnClickListener(v -> {
+            selectedPresetPhoto = "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800";
+            binding.ivPickedPhoto.setVisibility(View.GONE);
+            binding.layoutPhotoPlaceholder.setVisibility(View.VISIBLE);
+            binding.tvPhotoLabel.setText("🚜 Tractor Cover Photo Selected");
+            Toast.makeText(AddEquipmentActivity.this, "Selected Tractor Cover Photo", Toast.LENGTH_SHORT).show();
         });
 
-        binding.presetPhoto2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedPresetPhoto = "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=800";
-                binding.tvPhotoLabel.setText("🌾 Harvester Cover Photo Selected");
-                Toast.makeText(AddEquipmentActivity.this, "Selected Harvester Cover Photo", Toast.LENGTH_SHORT).show();
-            }
+        binding.presetPhoto2.setOnClickListener(v -> {
+            selectedPresetPhoto = "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=800";
+            binding.ivPickedPhoto.setVisibility(View.GONE);
+            binding.layoutPhotoPlaceholder.setVisibility(View.VISIBLE);
+            binding.tvPhotoLabel.setText("🌾 Harvester Cover Photo Selected");
+            Toast.makeText(AddEquipmentActivity.this, "Selected Harvester Cover Photo", Toast.LENGTH_SHORT).show();
         });
 
-        binding.presetPhoto3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedPresetPhoto = "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=800";
-                binding.tvPhotoLabel.setText("🛸 Drone Cover Photo Selected");
-                Toast.makeText(AddEquipmentActivity.this, "Selected Drone Cover Photo", Toast.LENGTH_SHORT).show();
-            }
+        binding.presetPhoto3.setOnClickListener(v -> {
+            selectedPresetPhoto = "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=800";
+            binding.ivPickedPhoto.setVisibility(View.GONE);
+            binding.layoutPhotoPlaceholder.setVisibility(View.VISIBLE);
+            binding.tvPhotoLabel.setText("🛸 Drone Cover Photo Selected");
+            Toast.makeText(AddEquipmentActivity.this, "Selected Drone Cover Photo", Toast.LENGTH_SHORT).show();
         });
 
-        binding.btnUseGpsLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                useCurrentLocation();
-            }
-        });
+        binding.btnUseGpsLocation.setOnClickListener(v -> useCurrentLocation());
 
         // Radius SeekBar
         binding.sbServiceRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -130,6 +129,50 @@ public class AddEquipmentActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
+    }
+
+    private void setupPhotoPicker() {
+        photoPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                            Uri imageUri = result.getData().getData();
+                            try {
+                                InputStream is = getContentResolver().openInputStream(imageUri);
+                                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                                if (bitmap != null) {
+                                    binding.ivPickedPhoto.setImageBitmap(bitmap);
+                                    binding.ivPickedPhoto.setVisibility(View.VISIBLE);
+                                    binding.layoutPhotoPlaceholder.setVisibility(View.GONE);
+
+                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+                                    byte[] imageBytes = baos.toByteArray();
+                                    String base64Image = Base64.encodeToString(imageBytes, Base64.DEFAULT).replaceAll("\\s+", "");
+                                    selectedPresetPhoto = "data:image/jpeg;base64," + base64Image;
+
+                                    Toast.makeText(AddEquipmentActivity.this, "Photo attached from device! 📷", Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (Exception e) {
+                                Toast.makeText(AddEquipmentActivity.this, "Failed to load photo from device", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void openDevicePhotoPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        try {
+            photoPickerLauncher.launch(intent);
+        } catch (Exception e) {
+            Intent fallbackIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            fallbackIntent.setType("image/*");
+            photoPickerLauncher.launch(fallbackIntent);
+        }
     }
 
     private void setupSpinners() {

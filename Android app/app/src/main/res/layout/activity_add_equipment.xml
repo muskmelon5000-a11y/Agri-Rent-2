@@ -169,8 +169,8 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_input_outline"
                     android:hint="e.g. Mahindra 575 DI"
-                    android:textColor="#111827"
-                    android:textColorHint="#9CA3AF"
+                    android:textColor="#000000"
+                    android:textColorHint="#6B7280"
                     android:inputType="text"
                     android:paddingHorizontal="14dp"
                     android:textSize="14sp"
@@ -579,8 +579,8 @@
                     android:layout_height="100dp"
                     android:background="@drawable/bg_input_outline"
                     android:hint="Describe condition, working capabilities, and specific instructions for farmers..."
-                    android:textColor="#111827"
-                    android:textColorHint="#9CA3AF"
+                    android:textColor="#000000"
+                    android:textColorHint="#6B7280"
                     android:inputType="textMultiLine"
                     android:gravity="top"
                     android:padding="12dp"
@@ -650,39 +650,66 @@
                     app:strokeColor="#CBD5E1"
                     app:strokeWidth="2dp"
                     app:cardBackgroundColor="#F8FAFC"
-                    android:layout_marginBottom="14dp">
+                    android:layout_marginBottom="12dp">
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center">
+                        android:layout_height="match_parent">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="📷"
-                            android:textSize="36sp" />
+                        <ImageView
+                            android:id="@+id/ivPickedPhoto"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone" />
 
-                        <TextView
-                            android:id="@+id/tvPhotoLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Primary Cover Photo Selected"
-                            android:textColor="#1F2937"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp" />
+                        <LinearLayout
+                            android:id="@+id/layoutPhotoPlaceholder"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="High-quality machinery photos increase booking requests"
-                            android:textColor="#6B7280"
-                            android:textSize="11sp"
-                            android:layout_marginTop="2dp" />
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📷"
+                                android:textSize="36sp" />
+
+                            <TextView
+                                android:id="@+id/tvPhotoLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Primary Cover Photo"
+                                android:textColor="#1F2937"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="8dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tap below to upload from gallery or choose preset photo"
+                                android:textColor="#6B7280"
+                                android:textSize="11sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+                    </RelativeLayout>
                 </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPickDevicePhoto"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="📁 Choose Photo from Device Gallery"
+                    android:textColor="#2E7D32"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:strokeColor="#2E7D32"
+                    app:strokeWidth="1.5dp"
+                    app:cornerRadius="12dp"
+                    android:layout_marginBottom="16dp" />
 
                 <!-- Additional Photo Presets Selection -->
                 <TextView
@@ -791,8 +818,8 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_input_outline"
                     android:hint="e.g. 1200"
-                    android:textColor="#111827"
-                    android:textColorHint="#9CA3AF"
+                    android:textColor="#000000"
+                    android:textColorHint="#6B7280"
                     android:inputType="numberDecimal"
                     android:paddingHorizontal="14dp"
                     android:textSize="14sp"
@@ -814,8 +841,8 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_input_outline"
                     android:hint="e.g. 150"
-                    android:textColor="#111827"
-                    android:textColorHint="#9CA3AF"
+                    android:textColor="#000000"
+                    android:textColorHint="#6B7280"
                     android:inputType="numberDecimal"
                     android:paddingHorizontal="14dp"
                     android:textSize="14sp"
@@ -837,8 +864,8 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_input_outline"
                     android:hint="e.g. 800"
-                    android:textColor="#111827"
-                    android:textColorHint="#9CA3AF"
+                    android:textColor="#000000"
+                    android:textColorHint="#6B7280"
                     android:inputType="numberDecimal"
                     android:paddingHorizontal="14dp"
                     android:textSize="14sp"
@@ -929,8 +956,8 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_input_outline"
                     android:hint="e.g. 500"
-                    android:textColor="#111827"
-                    android:textColorHint="#9CA3AF"
+                    android:textColor="#000000"
+                    android:textColorHint="#6B7280"
                     android:inputType="numberDecimal"
                     android:paddingHorizontal="14dp"
                     android:textSize="14sp" />
@@ -984,8 +1011,8 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_input_outline"
                     android:hint="e.g. Anandpur"
-                    android:textColor="#111827"
-                    android:textColorHint="#9CA3AF"
+                    android:textColor="#000000"
+                    android:textColorHint="#6B7280"
                     android:inputType="textPostalAddress"
                     android:paddingHorizontal="14dp"
                     android:textSize="14sp"
@@ -1007,8 +1034,8 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_input_outline"
                     android:hint="e.g. Kheda"
-                    android:textColor="#111827"
-                    android:textColorHint="#9CA3AF"
+                    android:textColor="#000000"
+                    android:textColorHint="#6B7280"
                     android:inputType="textPostalAddress"
                     android:paddingHorizontal="14dp"
                     android:textSize="14sp"
