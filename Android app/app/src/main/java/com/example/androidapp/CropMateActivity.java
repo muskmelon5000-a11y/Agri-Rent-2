@@ -62,21 +62,10 @@ public class CropMateActivity extends AppCompatActivity {
             }
         });
 
-        // Primary Action: GET STARTED / LOGIN Click
+        // Primary Action: GET STARTED / LOGIN Click -> opens Sign In screen
         binding.btnGetStarted.setOnClickListener(v -> {
-            if (sessionManager.isLoggedIn()) {
-                String role = sessionManager.getRole();
-                Intent intent;
-                if ("provider".equalsIgnoreCase(role)) {
-                    intent = new Intent(CropMateActivity.this, ProviderMainActivity.class);
-                } else {
-                    intent = new Intent(CropMateActivity.this, SeekerMainActivity.class);
-                }
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(CropMateActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(CropMateActivity.this, LoginActivity.class);
+            startActivity(intent);
         });
 
         // Secondary Action: NEW TO CROPMATE? REGISTER FREE Click
