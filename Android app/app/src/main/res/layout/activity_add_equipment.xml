@@ -1,257 +1,1181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout 
+<LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFA"
-    tools:context=".AddEquipmentActivity">
+    android:orientation="vertical"
+    android:background="#FAFAFA">
 
-    <ScrollView
+    <!-- Top App Bar -->
+    <RelativeLayout
+        android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="56dp"
+        android:background="@android:color/white"
+        android:paddingHorizontal="16dp"
+        android:elevation="2dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_revert"
+            android:tint="#111827"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Equipment"
+            android:textColor="#111827"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:layout_toEndOf="@id/btnBack" />
+    </RelativeLayout>
+
+    <!-- 4-Step Progress Indicator -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="14dp"
+        android:elevation="1dp">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp">
+            android:layout_marginBottom="8dp">
 
             <TextView
-                android:id="@+id/tvAddTitle"
+                android:id="@+id/tvStepNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="List New Machinery"
-                android:textColor="#0B192C"
-                android:textSize="24sp"
+                android:text="Step 1 of 4"
+                android:textColor="#2E7D32"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_alignParentStart="true" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardForm"
+            <TextView
+                android:id="@+id/tvStepTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Basic Details (TRACTOR)"
+                android:textColor="#6B7280"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+        <!-- 4 Step Bars -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/stepBar1"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="#2E7D32"
+                android:layout_marginEnd="3dp" />
+
+            <View
+                android:id="@+id/stepBar2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="#E5E7EB"
+                android:layout_marginHorizontal="3dp" />
+
+            <View
+                android:id="@+id/stepBar3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="#E5E7EB"
+                android:layout_marginHorizontal="3dp" />
+
+            <View
+                android:id="@+id/stepBar4"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="#E5E7EB"
+                android:layout_marginStart="3dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Scrollable Steps Body Container -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <ViewFlipper
+            android:id="@+id/viewFlipperSteps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- ═══════════════════ STEP 1: BASIC DETAILS ═══════════════════ -->
+            <LinearLayout
+                android:id="@+id/layoutStep1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@id/tvAddTitle">
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Category Spinner -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Equipment Category"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:paddingHorizontal="12dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Machine Name Input -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Equipment Name *"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:hint="e.g. Mahindra 575 DI"
+                    android:textColor="#111827"
+                    android:textColorHint="#9CA3AF"
+                    android:inputType="text"
+                    android:paddingHorizontal="14dp"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Brand & Year Grid -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="6dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Brand / Make"
+                            android:textColor="#111827"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/etBrand"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_input_outline"
+                            android:hint="e.g. Mahindra"
+                            android:textColor="#111827"
+                            android:textColorHint="#9CA3AF"
+                            android:inputType="text"
+                            android:paddingHorizontal="12dp"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="6dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Model Year"
+                            android:textColor="#111827"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/etYear"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_input_outline"
+                            android:hint="e.g. 2022"
+                            android:textColor="#111827"
+                            android:textColorHint="#9CA3AF"
+                            android:inputType="number"
+                            android:paddingHorizontal="12dp"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Dynamic Category Specific Fields Container -->
+                <!-- 1. Tractor Dynamic Fields -->
+                <LinearLayout
+                    android:id="@+id/layoutTractorFields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Horsepower (HP)"
+                                android:textColor="#111827"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
+
+                            <EditText
+                                android:id="@+id/etTractorHp"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_input_outline"
+                                android:hint="e.g. 47"
+                                android:textColor="#111827"
+                                android:textColorHint="#9CA3AF"
+                                android:inputType="number"
+                                android:paddingHorizontal="12dp"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Drive Type"
+                                android:textColor="#111827"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
+
+                            <Spinner
+                                android:id="@+id/spinnerDriveType"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_input_outline"
+                                android:paddingHorizontal="8dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Attachments Chips -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Available Attachments Included"
+                        android:textColor="#111827"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupAttachments"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        app:chipSpacingHorizontal="8dp"
+                        app:chipSpacingVertical="6dp" />
+                </LinearLayout>
+
+                <!-- 2. Drone Dynamic Fields -->
+                <LinearLayout
+                    android:id="@+id/layoutDroneFields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tank (Liters)"
+                                android:textColor="#111827"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
+
+                            <EditText
+                                android:id="@+id/etDroneTank"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_input_outline"
+                                android:hint="e.g. 40"
+                                android:textColor="#111827"
+                                android:textColorHint="#9CA3AF"
+                                android:inputType="number"
+                                android:paddingHorizontal="12dp"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Coverage/Batt (Acres)"
+                                android:textColor="#111827"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
+
+                            <EditText
+                                android:id="@+id/etDroneCoverage"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_input_outline"
+                                android:hint="e.g. 2.5"
+                                android:textColor="#111827"
+                                android:textColorHint="#9CA3AF"
+                                android:inputType="numberDecimal"
+                                android:paddingHorizontal="12dp"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Certified Pilot Included?"
+                        android:textColor="#111827"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/spinnerDronePilot"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_input_outline"
+                        android:paddingHorizontal="8dp"
+                        android:layout_marginBottom="16dp" />
+                </LinearLayout>
+
+                <!-- 3. Harvester Dynamic Fields -->
+                <LinearLayout
+                    android:id="@+id/layoutHarvesterFields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Engine (HP)"
+                                android:textColor="#111827"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
+
+                            <EditText
+                                android:id="@+id/etHarvesterHp"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_input_outline"
+                                android:hint="e.g. 75"
+                                android:textColor="#111827"
+                                android:textColorHint="#9CA3AF"
+                                android:inputType="number"
+                                android:paddingHorizontal="12dp"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Crop Compatibility"
+                                android:textColor="#111827"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
+
+                            <Spinner
+                                android:id="@+id/spinnerCropType"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_input_outline"
+                                android:paddingHorizontal="8dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 4. Implement Dynamic Fields -->
+                <LinearLayout
+                    android:id="@+id/layoutImplementFields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Working Width"
+                                android:textColor="#111827"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
+
+                            <EditText
+                                android:id="@+id/etImplementWidth"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_input_outline"
+                                android:hint="e.g. 7ft"
+                                android:textColor="#111827"
+                                android:textColorHint="#9CA3AF"
+                                android:inputType="text"
+                                android:paddingHorizontal="12dp"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="6dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Req Tractor HP"
+                                android:textColor="#111827"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
+
+                            <EditText
+                                android:id="@+id/etImplementReqHp"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_input_outline"
+                                android:hint="e.g. 35"
+                                android:textColor="#111827"
+                                android:textColorHint="#9CA3AF"
+                                android:inputType="number"
+                                android:paddingHorizontal="12dp"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Description & Features -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Description &amp; Features"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:hint="Describe condition, working capabilities, and specific instructions for farmers..."
+                    android:textColor="#111827"
+                    android:textColorHint="#9CA3AF"
+                    android:inputType="textMultiLine"
+                    android:gravity="top"
+                    android:padding="12dp"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- ═══════════════════ STEP 2: PHOTOS ═══════════════════ -->
+            <LinearLayout
+                android:id="@+id/layoutStep2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Photo Tips Box -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#BFDBFE"
+                    app:strokeWidth="1dp"
+                    app:cardBackgroundColor="#EFF6FF"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📷 Photo Tips"
+                            android:textColor="#1E40AF"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="• Take photos in good daylight\n• Show all sides of the equipment\n• Include close-ups of attachments and condition"
+                            android:textColor="#1E3A8A"
+                            android:textSize="12sp"
+                            android:lineSpacingExtra="3dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Primary Photo Upload Card -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload Photos"
+                    android:textColor="#111827"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardPrimaryPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#CBD5E1"
+                    app:strokeWidth="2dp"
+                    app:cardBackgroundColor="#F8FAFC"
+                    android:layout_marginBottom="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📷"
+                            android:textSize="36sp" />
+
+                        <TextView
+                            android:id="@+id/tvPhotoLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Primary Cover Photo Selected"
+                            android:textColor="#1F2937"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="High-quality machinery photos increase booking requests"
+                            android:textColor="#6B7280"
+                            android:textSize="11sp"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Additional Photo Presets Selection -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Choose Icon / Preset Photo"
+                    android:textColor="#6B7280"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:orientation="horizontal">
 
-                    <!-- Machine Name -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilName"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/presetPhoto1"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="72dp"
+                        android:layout_marginEnd="6dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardBackgroundColor="#F0FDF4"
+                        app:strokeColor="#86EFAC"
+                        app:strokeWidth="1.5dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="🚜"
+                            android:textSize="28sp" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/presetPhoto2"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="72dp"
+                        android:layout_marginHorizontal="3dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardBackgroundColor="#F0FDF4"
+                        app:strokeColor="#86EFAC"
+                        app:strokeWidth="1.5dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="🌾"
+                            android:textSize="28sp" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/presetPhoto3"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="72dp"
+                        android:layout_marginStart="6dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardBackgroundColor="#F0FDF4"
+                        app:strokeColor="#86EFAC"
+                        app:strokeWidth="1.5dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="🛸"
+                            android:textSize="28sp" />
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ═══════════════════ STEP 3: PRICING & RATES ═══════════════════ -->
+            <LinearLayout
+                android:id="@+id/layoutStep3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rental Rates"
+                    android:textColor="#111827"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Daily Rate -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Daily Rate (₹) - Required *"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etPricePerDay"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:hint="e.g. 1200"
+                    android:textColor="#111827"
+                    android:textColorHint="#9CA3AF"
+                    android:inputType="numberDecimal"
+                    android:paddingHorizontal="14dp"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="14dp" />
+
+                <!-- Hourly Rate -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hourly Rate (₹) - Optional"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etPricePerHour"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:hint="e.g. 150"
+                    android:textColor="#111827"
+                    android:textColorHint="#9CA3AF"
+                    android:inputType="numberDecimal"
+                    android:paddingHorizontal="14dp"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="14dp" />
+
+                <!-- Per Acre Rate -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Per Acre Rate (₹) - Optional"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etPricePerAcre"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:hint="e.g. 800"
+                    android:textColor="#111827"
+                    android:textColorHint="#9CA3AF"
+                    android:inputType="numberDecimal"
+                    android:paddingHorizontal="14dp"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Weekly Discount Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="1dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:layout_marginBottom="16dp">
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Machine Name (e.g. Mahindra Arjun 605)">
+                        android:padding="16dp">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etName"
-                            android:layout_width="match_parent"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:orientation="vertical"
+                            android:layout_alignParentStart="true"
+                            android:layout_toStartOf="@id/switchWeeklyDiscount">
 
-                    <!-- Type RadioGroup -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Weekly Discount"
+                                android:textColor="#111827"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Offer 10% off for 7+ days booking"
+                                android:textColor="#6B7280"
+                                android:textSize="12sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchWeeklyDiscount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:checked="true"
+                            app:trackTint="#C8E6C9"
+                            app:thumbTint="#2E7D32" />
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Minimum Booking Duration -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Minimum Booking Duration"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerMinDuration"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:paddingHorizontal="12dp"
+                    android:layout_marginBottom="14dp" />
+
+                <!-- Security Deposit -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Security Deposit (₹) - Optional"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etSecurityDeposit"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:hint="e.g. 500"
+                    android:textColor="#111827"
+                    android:textColorHint="#9CA3AF"
+                    android:inputType="numberDecimal"
+                    android:paddingHorizontal="14dp"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- ═══════════════════ STEP 4: LOCATION & DELIVERY ═══════════════════ -->
+            <LinearLayout
+                android:id="@+id/layoutStep4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Equipment Location &amp; Region"
+                    android:textColor="#111827"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- GPS Location Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUseGpsLocation"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="📍 Use Current Location"
+                    android:textColor="#2E7D32"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:strokeColor="#2E7D32"
+                    app:strokeWidth="1.5dp"
+                    app:cornerRadius="12dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Village Input -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Village / Town *"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etVillage"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:hint="e.g. Anandpur"
+                    android:textColor="#111827"
+                    android:textColorHint="#9CA3AF"
+                    android:inputType="textPostalAddress"
+                    android:paddingHorizontal="14dp"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="14dp" />
+
+                <!-- District Input -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="District *"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/etDistrict"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_outline"
+                    android:hint="e.g. Kheda"
+                    android:textColor="#111827"
+                    android:textColorHint="#9CA3AF"
+                    android:inputType="textPostalAddress"
+                    android:paddingHorizontal="14dp"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Service Radius Slider -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Equipment Type"
-                        android:textColor="#212121"
+                        android:text="Service Radius"
+                        android:textColor="#111827"
+                        android:textSize="13sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="6dp"/>
+                        android:layout_alignParentStart="true" />
 
-                    <RadioGroup
-                        android:id="@+id/rgType"
+                    <TextView
+                        android:id="@+id/tvRadiusValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="15 km"
+                        android:textColor="#2E7D32"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_alignParentEnd="true" />
+                </RelativeLayout>
+
+                <SeekBar
+                    android:id="@+id/sbServiceRadius"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="50"
+                    android:progress="15"
+                    android:thumbTint="#2E7D32"
+                    android:progressTint="#2E7D32"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Delivery Options Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="1dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="@android:color/white">
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_marginBottom="16dp">
+                        android:padding="16dp">
 
-                        <RadioButton
-                            android:id="@+id/rbTractor"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tractor"
-                            android:checked="true"
-                            android:buttonTint="#0B192C"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                        <RadioButton
-                            android:id="@+id/rbHarvester"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Harvester"
-                            android:buttonTint="#0B192C"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_alignParentStart="true"
+                                android:layout_toStartOf="@id/switchOfferDelivery">
 
-                        <RadioButton
-                            android:id="@+id/rbDrone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Drone"
-                            android:buttonTint="#0B192C"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Offer Delivery"
+                                    android:textColor="#111827"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
 
-                        <RadioButton
-                            android:id="@+id/rbImplement"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Implement (Rotavator, Plow, etc.)"
-                            android:buttonTint="#0B192C"/>
-                    </RadioGroup>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="I can transport this machinery to the farmer"
+                                    android:textColor="#6B7280"
+                                    android:textSize="12sp"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
 
-                    <!-- Brand -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilBrand"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Brand (e.g. Mahindra, John Deere)">
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/switchOfferDelivery"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:checked="true"
+                                app:trackTint="#C8E6C9"
+                                app:thumbTint="#2E7D32" />
+                        </RelativeLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etBrand"
+                        <LinearLayout
+                            android:id="@+id/layoutDeliveryCharge"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:orientation="vertical"
+                            android:layout_marginTop="12dp">
 
-                    <!-- Model -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilModel"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Model (e.g. Arjun 605 DI)">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Delivery Charge per km (₹)"
+                                android:textColor="#374151"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:layout_marginBottom="4dp" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etModel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            <EditText
+                                android:id="@+id/etDeliveryCharge"
+                                android:layout_width="match_parent"
+                                android:layout_height="44dp"
+                                android:background="@drawable/bg_input_outline"
+                                android:hint="50"
+                                android:text="50"
+                                android:textColor="#111827"
+                                android:textColorHint="#9CA3AF"
+                                android:inputType="numberDecimal"
+                                android:paddingHorizontal="12dp"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Horsepower (HP) -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilHp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Horsepower (HP, optional)">
+            </LinearLayout>
+        </ViewFlipper>
+    </androidx.core.widget.NestedScrollView>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etHp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="number" />
-                    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Bottom Navigation Buttons Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:elevation="8dp">
 
-                    <!-- Year -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilYear"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Year of Purchase (optional)">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPrevStep"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="52dp"
+            android:text="Previous"
+            android:textColor="#6B7280"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:strokeColor="#D1D5DB"
+            app:strokeWidth="1.5dp"
+            app:cornerRadius="12dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etYear"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="number" />
-                    </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNextStep"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="52dp"
+            android:text="Next Step →"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2E7D32"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
 
-                    <!-- Price per Day -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilPrice"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Rental Price per Day (₹)">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etPrice"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Village -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilVillage"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Village">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etVillage"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- District -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilDistrict"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="District">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etDistrict"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Description -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilDesc"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:hint="Machinery Description">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etDesc"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="textMultiLine"
-                            android:minLines="3"
-                            android:gravity="top" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Submit Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSubmitListing"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:text="Post Machinery Listing"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:backgroundTint="#0B192C"
-                        app:cornerRadius="12dp" />
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

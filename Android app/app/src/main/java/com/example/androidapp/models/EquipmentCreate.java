@@ -27,6 +27,9 @@ public class EquipmentCreate {
     @SerializedName("price_per_day")
     private double pricePerDay;
 
+    @SerializedName("price_per_hour")
+    private Double pricePerHour;
+
     @SerializedName("latitude")
     private double latitude = 23.0225;
 
@@ -39,7 +42,13 @@ public class EquipmentCreate {
     @SerializedName("district")
     private String district;
 
-    public EquipmentCreate(String name, String type, String brand, String model, Integer hp, Integer year, String description, double pricePerDay, String village, String district) {
+    @SerializedName("images")
+    private String images;
+
+    @SerializedName("attachments")
+    private String attachments;
+
+    public EquipmentCreate(String name, String type, String brand, String model, Integer hp, Integer year, String description, double pricePerDay, Double pricePerHour, String village, String district, String images, String attachments) {
         this.name = name;
         this.type = type;
         this.brand = brand;
@@ -48,8 +57,11 @@ public class EquipmentCreate {
         this.year = year;
         this.description = description;
         this.pricePerDay = pricePerDay;
+        this.pricePerHour = pricePerHour;
         this.village = village;
         this.district = district;
+        this.images = images;
+        this.attachments = attachments;
     }
 
     // Getters and Setters
@@ -77,6 +89,9 @@ public class EquipmentCreate {
     public double getPricePerDay() { return pricePerDay; }
     public void setPricePerDay(double pricePerDay) { this.pricePerDay = pricePerDay; }
 
+    public Double getPricePerHour() { return pricePerHour; }
+    public void setPricePerHour(Double pricePerHour) { this.pricePerHour = pricePerHour; }
+
     public double getLatitude() { return latitude; }
     public void setLatitude(double latitude) { this.latitude = latitude; }
 
@@ -88,4 +103,10 @@ public class EquipmentCreate {
 
     public String getDistrict() { return district; }
     public void setDistrict(String district) { this.district = district; }
+
+    public String getImages() { return images; }
+    public void setImages(String images) { this.images = images; }
+
+    public String getAttachments() { return attachments; }
+    public void setAttachments(String attachments) { this.attachments = attachments; }
 }
