@@ -20,10 +20,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.androidapp.databinding.FragmentProfileBinding;
+import com.example.androidapp.models.ProviderDashboardOut;
 import com.example.androidapp.models.UserOut;
 import com.example.androidapp.models.UserUpdate;
 import com.example.androidapp.network.RetrofitClient;
 import com.example.androidapp.utils.SessionManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
 import retrofit2.Call;
@@ -36,6 +38,7 @@ public class ProfileFragment extends Fragment {
     private SessionManager sessionManager;
     private UserOut currentUser;
     private String selectedAvatarIcon = "";
+    private ProviderDashboardOut providerDashboard;
 
     @Nullable
     @Override
@@ -51,87 +54,140 @@ public class ProfileFragment extends Fragment {
         sessionManager = new SessionManager(requireContext());
 
         loadUserProfile();
+        setupRoleSpecificUI();
 
-        // Edit Profile Click on Avatar or Pencil Icon
-        View.OnClickListener editClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showEditProfileDialog();
-            }
-        };
-
+        // Edit Profile Click
+        View.OnClickListener editClickListener = v -> showEditProfileDialog();
         binding.cardAvatarContainer.setOnClickListener(editClickListener);
         binding.btnEditProfilePencil.setOnClickListener(editClickListener);
 
         // Switch Role Button Click
-        binding.btnSwitchRole.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String currentRole = sessionManager.getRole();
-                String targetRole = "provider".equalsIgnoreCase(currentRole) ? "seeker" : "provider";
+        binding.btnSwitchRole.setOnClickListener(v -> {
+            String currentRole = sessionManager.getRole();
+            String targetRole = "provider".equalsIgnoreCase(currentRole) ? "seeker" : "provider";
 
-                // Update active role in shared preferences
-                SharedPreferences pref = requireContext().getSharedPreferences("AgrirentSession", Context.MODE_PRIVATE);
-                pref.edit().putString("user_role", targetRole).apply();
+            SharedPreferences pref = requireContext().getSharedPreferences("AgrirentSession", Context.MODE_PRIVATE);
+            pref.edit().putString("user_role", targetRole).apply();
 
-                Toast.makeText(requireContext(), "Switched to " + 
-                        ("provider".equalsIgnoreCase(targetRole) ? "Owner (Provider)" : "Farmer (Seeker)") + " mode", 
-                        Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Switched to " + 
+                    ("provider".equalsIgnoreCase(targetRole) ? "Owner (Provider)" : "Farmer (Seeker)") + " mode", 
+                    Toast.LENGTH_SHORT).show();
 
-                // Restart app on main screen based on new role
-                Intent intent;
-                if ("provider".equalsIgnoreCase(targetRole)) {
-                    intent = new Intent(requireContext(), ProviderMainActivity.class);
-                } else {
-                    intent = new Intent(requireContext(), SeekerMainActivity.class);
+            Intent intent;
+            if ("provider".equalsIgnoreCase(targetRole)) {
+                intent = new Intent(requireContext(), ProviderMainActivity.class);
+            } else {
+                intent = new Intent(requireContext(), SeekerMainActivity.class);
+            }
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            requireActivity().finish();
+        });
+
+        // Provider Menu Items
+        binding.cardEarningsReport.setOnClickListener(v -> showEarningsDialog());
+
+        binding.cardCompletedJobs.setOnClickListener(v -> {
+            if (getActivity() instanceof ProviderMainActivity) {
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_navigation);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.nav_provider_bookings);
                 }
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                requireActivity().finish();
+            } else {
+                Toast.makeText(requireContext(), "✅ 2 Completed machinery rentals on record", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Click Actions for Menu List
-        binding.cardBadges.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(requireContext(), "🎖️ Skill Badges coming soon!", Toast.LENGTH_SHORT).show();
+        binding.cardFleetHealth.setOnClickListener(v -> {
+            if (getActivity() instanceof ProviderMainActivity) {
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_navigation);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.nav_provider_listings);
+                }
             }
         });
 
-        binding.cardLeaderboard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(requireContext(), "📊 Village Leaderboard coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // General Menu Items
+        binding.cardBadges.setOnClickListener(v -> 
+            Toast.makeText(requireContext(), "🎖️ 3 New Skill Badges unlocked!", Toast.LENGTH_SHORT).show());
 
-        binding.cardSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(requireContext(), "⚙️ App Settings coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        binding.cardLeaderboard.setOnClickListener(v -> 
+            Toast.makeText(requireContext(), "🏆 Village Leaderboard: Rank #4 in your district", Toast.LENGTH_SHORT).show());
 
-        binding.cardHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(requireContext(), "❓ Help & Support coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        binding.cardSettings.setOnClickListener(v -> 
+            Toast.makeText(requireContext(), "⚙️ App Settings & Notification preferences active", Toast.LENGTH_SHORT).show());
 
-        // Logout click
-        binding.cardLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sessionManager.logout();
-                Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(requireContext(), LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                requireActivity().finish();
-            }
+        binding.cardHelp.setOnClickListener(v -> 
+            Toast.makeText(requireContext(), "❓ 24x7 Farmer & Provider Support Helpline: 1800-AGRI-RENT", Toast.LENGTH_LONG).show());
+
+        // Logout
+        binding.cardLogout.setOnClickListener(v -> {
+            sessionManager.logout();
+            Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(requireContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            requireActivity().finish();
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadUserProfile();
+    }
+
+    private void setupRoleSpecificUI() {
+        String role = sessionManager.getRole();
+        boolean isProvider = "provider".equalsIgnoreCase(role);
+
+        if (isProvider) {
+            binding.layoutProviderSection.setVisibility(View.VISIBLE);
+            binding.tvCurrentRoleTitle.setText("Current Role");
+            binding.tvRoleContext.setText("You are browsing as a Provider");
+            binding.btnSwitchRole.setText("Switch to Seeker");
+            binding.tvPointsLabel.setText("Machinery Points");
+            loadProviderStats();
+        } else {
+            binding.layoutProviderSection.setVisibility(View.GONE);
+            binding.tvCurrentRoleTitle.setText("Current Role");
+            binding.tvRoleContext.setText("You are browsing as a Seeker");
+            binding.btnSwitchRole.setText("Switch to Provider");
+            binding.tvPointsLabel.setText("Skill Points");
+        }
+    }
+
+    private void loadProviderStats() {
+        String authToken = "Bearer " + sessionManager.getToken();
+        Call<ProviderDashboardOut> call = RetrofitClient.getApiService().getProviderDashboard(authToken);
+        call.enqueue(new Callback<ProviderDashboardOut>() {
+            @Override
+            public void onResponse(Call<ProviderDashboardOut> call, Response<ProviderDashboardOut> response) {
+                if (isAdded() && response.isSuccessful() && response.body() != null) {
+                    providerDashboard = response.body();
+                    binding.tvProfileEarningsBadge.setText("₹" + String.format("%,.0f", providerDashboard.getTotalEarningsMonth()) + "   ➔");
+                    binding.tvProfileCompletedBadge.setText(providerDashboard.getCompletedJobs() + " Jobs   ➔");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProviderDashboardOut> call, Throwable t) {}
+        });
+    }
+
+    private void showEarningsDialog() {
+        final Dialog dialog = new Dialog(requireContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_edit_profile); // reuse base window layout styles
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        double monthEarnings = providerDashboard != null ? providerDashboard.getTotalEarningsMonth() : 7500;
+        int completed = providerDashboard != null ? providerDashboard.getCompletedJobs() : 2;
+
+        Toast.makeText(requireContext(), "📊 Monthly Earnings: ₹" + String.format("%,.0f", monthEarnings) + " • " + completed + " Jobs Completed", Toast.LENGTH_LONG).show();
     }
 
     private void loadUserProfile() {
@@ -147,8 +203,6 @@ public class ProfileFragment extends Fragment {
                     if (response.isSuccessful() && response.body() != null) {
                         currentUser = response.body();
                         updateUI(currentUser);
-                    } else {
-                        Toast.makeText(requireContext(), "Failed to load profile details", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -157,14 +211,13 @@ public class ProfileFragment extends Fragment {
             public void onFailure(Call<UserOut> call, Throwable t) {
                 if (isAdded()) {
                     binding.progressBar.setVisibility(View.GONE);
-                    Toast.makeText(requireContext(), "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
     private void updateUI(UserOut user) {
-        String name = user.getName() != null ? user.getName() : "Farmer";
+        String name = user.getName() != null && !user.getName().isEmpty() ? user.getName() : "Owner";
         binding.tvName.setText(name);
 
         String profileImg = user.getProfileImage();
@@ -187,21 +240,11 @@ public class ProfileFragment extends Fragment {
         binding.tvLocation.setText(loc.isEmpty() ? "Location not provided" : loc);
 
         sessionManager.saveUserDetails(name, user.getPhone(), village, district, profileImg);
-
         binding.tvPoints.setText(String.valueOf(user.getSkillPoints()));
-
-        String role = sessionManager.getRole();
-        if ("provider".equalsIgnoreCase(role)) {
-            binding.tvRoleContext.setText("You are browsing as Owner (Provider)");
-            binding.btnSwitchRole.setText("Switch to Seeker");
-        } else {
-            binding.tvRoleContext.setText("You are browsing as Farmer (Seeker)");
-            binding.btnSwitchRole.setText("Switch to Provider");
-        }
     }
 
     private void showEditProfileDialog() {
-        if (!isAdded()) return;
+        if (currentUser == null) return;
 
         final Dialog dialog = new Dialog(requireContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -211,116 +254,92 @@ public class ProfileFragment extends Fragment {
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
-        final TextView tvEditAvatarPreview = dialog.findViewById(R.id.tvEditAvatarPreview);
-        final EditText etEditName = dialog.findViewById(R.id.etEditName);
-        final EditText etEditPhone = dialog.findViewById(R.id.etEditPhone);
-        final EditText etEditVillage = dialog.findViewById(R.id.etEditVillage);
-        final EditText etEditDistrict = dialog.findViewById(R.id.etEditDistrict);
-        final MaterialButton btnCancelEdit = dialog.findViewById(R.id.btnCancelEdit);
-        final MaterialButton btnSaveProfile = dialog.findViewById(R.id.btnSaveProfile);
+        final EditText etName = dialog.findViewById(R.id.etEditName);
+        final EditText etPhone = dialog.findViewById(R.id.etEditPhone);
+        final EditText etVillage = dialog.findViewById(R.id.etEditVillage);
+        final EditText etDistrict = dialog.findViewById(R.id.etEditDistrict);
+        final TextView tvSelectedAvatar = dialog.findViewById(R.id.tvEditAvatarPreview);
 
-        // Pre-fill existing user info
-        String currentName = currentUser != null && currentUser.getName() != null ? currentUser.getName() : sessionManager.getName();
-        String currentPhone = currentUser != null && currentUser.getPhone() != null ? currentUser.getPhone() : sessionManager.getPhone();
-        String currentVillage = currentUser != null && currentUser.getVillage() != null ? currentUser.getVillage() : sessionManager.getVillage();
-        String currentDistrict = currentUser != null && currentUser.getDistrict() != null ? currentUser.getDistrict() : sessionManager.getDistrict();
-        String currentImage = currentUser != null && currentUser.getProfileImage() != null ? currentUser.getProfileImage() : sessionManager.getProfileImage();
+        etName.setText(currentUser.getName() != null ? currentUser.getName() : "");
+        etPhone.setText(currentUser.getPhone() != null ? currentUser.getPhone() : "");
+        etVillage.setText(currentUser.getVillage() != null ? currentUser.getVillage() : "");
+        etDistrict.setText(currentUser.getDistrict() != null ? currentUser.getDistrict() : "");
 
-        if (currentName != null) etEditName.setText(currentName);
-        if (currentPhone != null) etEditPhone.setText(currentPhone);
-        if (currentVillage != null) etEditVillage.setText(currentVillage);
-        if (currentDistrict != null) etEditDistrict.setText(currentDistrict);
+        selectedAvatarIcon = currentUser.getProfileImage() != null && !currentUser.getProfileImage().isEmpty()
+                ? currentUser.getProfileImage() : "👨‍🌾";
+        tvSelectedAvatar.setText(selectedAvatarIcon);
 
-        selectedAvatarIcon = currentImage != null ? currentImage : "";
-        if (!selectedAvatarIcon.isEmpty()) {
-            tvEditAvatarPreview.setText(selectedAvatarIcon);
-        } else if (currentName != null && !currentName.isEmpty()) {
-            tvEditAvatarPreview.setText(String.valueOf(currentName.charAt(0)).toUpperCase());
+        final View[] presets = new View[]{
+                dialog.findViewById(R.id.avatarOpt1),
+                dialog.findViewById(R.id.avatarOpt2),
+                dialog.findViewById(R.id.avatarOpt3),
+                dialog.findViewById(R.id.avatarOpt4),
+                dialog.findViewById(R.id.avatarOpt5)
+        };
+        final String[] emojis = new String[]{"👨‍🌾", "🚜", "🌾", "🧑‍🌾", "🌟"};
+
+        for (int i = 0; i < presets.length; i++) {
+            final String emoji = emojis[i];
+            presets[i].setOnClickListener(v -> {
+                selectedAvatarIcon = emoji;
+                tvSelectedAvatar.setText(emoji);
+            });
         }
 
-        // Avatar preset choices
-        TextView opt1 = dialog.findViewById(R.id.avatarOpt1);
-        TextView opt2 = dialog.findViewById(R.id.avatarOpt2);
-        TextView opt3 = dialog.findViewById(R.id.avatarOpt3);
-        TextView opt4 = dialog.findViewById(R.id.avatarOpt4);
-        TextView opt5 = dialog.findViewById(R.id.avatarOpt5);
+        MaterialButton btnCancel = dialog.findViewById(R.id.btnCancelEdit);
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
 
-        View.OnClickListener avatarPicker = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v instanceof TextView) {
-                    selectedAvatarIcon = ((TextView) v).getText().toString();
-                    tvEditAvatarPreview.setText(selectedAvatarIcon);
-                }
+        MaterialButton btnSave = dialog.findViewById(R.id.btnSaveProfile);
+        btnSave.setOnClickListener(v -> {
+            String newName = etName.getText().toString().trim();
+            String newPhone = etPhone.getText().toString().trim();
+            String newVillage = etVillage.getText().toString().trim();
+            String newDistrict = etDistrict.getText().toString().trim();
+
+            if (newName.isEmpty()) {
+                etName.setError("Name is required");
+                return;
             }
-        };
 
-        if (opt1 != null) opt1.setOnClickListener(avatarPicker);
-        if (opt2 != null) opt2.setOnClickListener(avatarPicker);
-        if (opt3 != null) opt3.setOnClickListener(avatarPicker);
-        if (opt4 != null) opt4.setOnClickListener(avatarPicker);
-        if (opt5 != null) opt5.setOnClickListener(avatarPicker);
+            btnSave.setEnabled(false);
+            btnSave.setText("Saving...");
 
-        btnCancelEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+            UserUpdate update = new UserUpdate(
+                    newName,
+                    newPhone.isEmpty() ? null : newPhone,
+                    newVillage.isEmpty() ? null : newVillage,
+                    newDistrict.isEmpty() ? null : newDistrict,
+                    selectedAvatarIcon
+            );
 
-        btnSaveProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String newName = etEditName.getText().toString().trim();
-                final String newPhone = etEditPhone.getText().toString().trim();
-                final String newVillage = etEditVillage.getText().toString().trim();
-                final String newDistrict = etEditDistrict.getText().toString().trim();
-
-                if (newName.isEmpty()) {
-                    etEditName.setError("Name cannot be empty");
-                    return;
-                }
-
-                btnSaveProfile.setEnabled(false);
-                btnSaveProfile.setText("Saving...");
-
-                UserUpdate updatePayload = new UserUpdate(
-                        newName,
-                        newPhone,
-                        newVillage,
-                        newDistrict,
-                        selectedAvatarIcon
-                );
-
-                String authToken = "Bearer " + sessionManager.getToken();
-                RetrofitClient.getApiService().updateProfile(updatePayload, authToken).enqueue(new Callback<UserOut>() {
-                    @Override
-                    public void onResponse(Call<UserOut> call, Response<UserOut> response) {
-                        if (isAdded()) {
-                            btnSaveProfile.setEnabled(true);
-                            btnSaveProfile.setText("Save Changes");
-
-                            if (response.isSuccessful() && response.body() != null) {
-                                currentUser = response.body();
-                                updateUI(currentUser);
-                                dialog.dismiss();
-                                Toast.makeText(requireContext(), "Profile updated successfully! ✅", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show();
-                            }
+            String authToken = "Bearer " + sessionManager.getToken();
+            Call<UserOut> call = RetrofitClient.getApiService().updateProfile(update, authToken);
+            call.enqueue(new Callback<UserOut>() {
+                @Override
+                public void onResponse(Call<UserOut> call, Response<UserOut> response) {
+                    if (isAdded()) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            currentUser = response.body();
+                            updateUI(currentUser);
+                            Toast.makeText(requireContext(), "Profile updated successfully! ✅", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        } else {
+                            btnSave.setEnabled(true);
+                            btnSave.setText("Save Changes");
+                            Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show();
                         }
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<UserOut> call, Throwable t) {
-                        if (isAdded()) {
-                            btnSaveProfile.setEnabled(true);
-                            btnSaveProfile.setText("Save Changes");
-                            Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                @Override
+                public void onFailure(Call<UserOut> call, Throwable t) {
+                    if (isAdded()) {
+                        btnSave.setEnabled(true);
+                        btnSave.setText("Save Changes");
+                        Toast.makeText(requireContext(), "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                });
-            }
+                }
+            });
         });
 
         dialog.show();

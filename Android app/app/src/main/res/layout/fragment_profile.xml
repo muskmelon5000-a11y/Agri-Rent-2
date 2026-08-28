@@ -12,17 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:paddingBottom="40dp">
 
         <!-- Title -->
         <TextView
+            android:id="@+id/tvProfileTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Profile"
             android:textColor="#111827"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="20dp" />
 
         <!-- Profile Header Details -->
         <LinearLayout
@@ -54,10 +56,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="F"
-                        android:textColor="#2E7D32"
-                        android:textSize="28sp"
-                        android:textStyle="bold" />
+                        android:text="👨‍🌾"
+                        android:textSize="28sp" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Edit Pencil Icon Overlay -->
@@ -106,11 +106,11 @@
                     android:gravity="center_vertical"
                     android:layout_marginTop="4dp">
 
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@android:drawable/ic_menu_call"
-                        android:tint="#4B5563" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📞"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/tvPhone"
@@ -130,11 +130,11 @@
                     android:gravity="center_vertical"
                     android:layout_marginTop="4dp">
 
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        android:tint="#4B5563" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📍"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/tvLocation"
@@ -150,11 +150,12 @@
 
         <!-- Role Switcher Card -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardRoleSwitcher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
+            app:cardElevation="1dp"
             app:strokeWidth="0dp"
             app:cardBackgroundColor="#E8F5E9">
 
@@ -172,6 +173,7 @@
                     android:layout_centerVertical="true">
 
                     <TextView
+                        android:id="@+id/tvCurrentRoleTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Current Role"
@@ -184,7 +186,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="You are browsing as Seeker"
+                        android:text="You are browsing as Provider"
                         android:textColor="#4B5563"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -195,7 +197,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:text="Switch"
+                    android:text="Switch to Seeker"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="#2E7D32"
@@ -229,11 +231,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp">
+                    android:padding="14dp">
 
                     <TextView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:text="🏆"
                         android:textSize="20sp"
                         android:gravity="center"
@@ -256,6 +258,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvPointsLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Skill Points"
@@ -281,11 +284,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp">
+                    android:padding="14dp">
 
                     <TextView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:text="⭐"
                         android:textSize="20sp"
                         android:gravity="center"
@@ -318,7 +321,143 @@
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
-        <!-- Menu Section: Community & Achievements -->
+        <!-- ═══════════════ PROVIDER OPERATIONS & REPORTS SECTION ═══════════════ -->
+        <LinearLayout
+            android:id="@+id/layoutProviderSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PROVIDER OPERATIONS &amp; REPORTS"
+                android:textColor="#6B7280"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Earnings Report Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardEarningsReport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📊   Earnings Report"
+                        android:textColor="#111827"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:id="@+id/tvProfileEarningsBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="₹7,500   ➔"
+                        android:textColor="#2E7D32"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Completed Jobs Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardCompletedJobs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✅   Completed Jobs"
+                        android:textColor="#111827"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:id="@+id/tvProfileCompletedBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2 Jobs   ➔"
+                        android:textColor="#2563EB"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Machinery Fleet & Health -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardFleetHealth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🚜   Equipment Fleet &amp; Health"
+                        android:textColor="#111827"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Active   ➔"
+                        android:textColor="#16A34A"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- ═══════════════ COMMUNITY & ACHIEVEMENTS ═══════════════ -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -335,7 +474,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="14dp"
             app:cardElevation="1dp"
             app:strokeWidth="0dp"
             app:cardBackgroundColor="@android:color/white">
@@ -373,7 +512,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="14dp"
             app:cardElevation="1dp"
             app:strokeWidth="0dp"
             app:cardBackgroundColor="@android:color/white">
@@ -386,7 +525,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📊   Village Leaderboard"
+                    android:text="🏆   Village Leaderboard"
                     android:textColor="#1F2937"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -399,12 +538,13 @@
                     android:text="➔"
                     android:textColor="#9CA3AF"
                     android:textSize="14sp"
+                    android:textStyle="bold"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true" />
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Menu Section: Settings & Support -->
+        <!-- ═══════════════ SETTINGS & SUPPORT ═══════════════ -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -421,7 +561,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="14dp"
             app:cardElevation="1dp"
             app:strokeWidth="0dp"
             app:cardBackgroundColor="@android:color/white">
@@ -447,6 +587,7 @@
                     android:text="➔"
                     android:textColor="#9CA3AF"
                     android:textSize="14sp"
+                    android:textStyle="bold"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true" />
             </RelativeLayout>
@@ -458,7 +599,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="14dp"
             app:cardElevation="1dp"
             app:strokeWidth="0dp"
             app:cardBackgroundColor="@android:color/white">
@@ -484,6 +625,7 @@
                     android:text="➔"
                     android:textColor="#9CA3AF"
                     android:textSize="14sp"
+                    android:textStyle="bold"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true" />
             </RelativeLayout>
@@ -495,9 +637,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="1dp"
-            app:strokeWidth="0dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#FEE2E2"
             app:cardBackgroundColor="#FEF2F2">
 
             <RelativeLayout
@@ -519,19 +662,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="➔"
-                    android:textColor="#FCA5A5"
+                    android:textColor="#F87171"
                     android:textSize="14sp"
+                    android:textStyle="bold"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true" />
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Loading spinner -->
+        <!-- Loading Spinner -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
             android:visibility="gone" />
 
     </LinearLayout>
