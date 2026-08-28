@@ -177,8 +177,8 @@ public class AddEquipmentActivity extends AppCompatActivity {
 
     private void setupSpinners() {
         // Category
-        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, CATEGORIES);
-        catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, CATEGORIES);
+        catAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         binding.spinnerCategory.setAdapter(catAdapter);
 
         binding.spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -192,23 +192,23 @@ public class AddEquipmentActivity extends AppCompatActivity {
         });
 
         // Drive Type
-        ArrayAdapter<String> driveAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, DRIVE_TYPES);
-        driveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> driveAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, DRIVE_TYPES);
+        driveAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         binding.spinnerDriveType.setAdapter(driveAdapter);
 
         // Drone Pilot
-        ArrayAdapter<String> pilotAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, PILOT_OPTIONS);
-        pilotAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> pilotAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, PILOT_OPTIONS);
+        pilotAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         binding.spinnerDronePilot.setAdapter(pilotAdapter);
 
         // Harvester Crop
-        ArrayAdapter<String> cropAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, CROP_TYPES);
-        cropAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> cropAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, CROP_TYPES);
+        cropAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         binding.spinnerCropType.setAdapter(cropAdapter);
 
         // Min Duration
-        ArrayAdapter<String> durationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, MIN_DURATIONS);
-        durationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> durationAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, MIN_DURATIONS);
+        durationAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         binding.spinnerMinDuration.setAdapter(durationAdapter);
     }
 
