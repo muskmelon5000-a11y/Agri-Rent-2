@@ -11,10 +11,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="24dp">
+        android:orientation="vertical">
 
-        <!-- Real Orange Tractor Sunset Hero Image Header from User's Screenshot -->
+        <!-- Real Orange Tractor Sunset Hero Image Header -->
         <ImageView
             android:id="@+id/ivHeroBanner"
             android:layout_width="match_parent"
@@ -290,15 +289,15 @@
                 app:cornerRadius="16dp"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Wheat Landscape Footer -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="🌾 🏡 🌾 🌾 🏡 🌾"
-                android:textColor="#FFD8BE"
-                android:textSize="20sp" />
-
         </LinearLayout>
+
+        <!-- Real Wheat Landscape Footer Image from User's Screenshot -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/wheat_landscape_footer"
+            android:contentDescription="Wheat Landscape Footer" />
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

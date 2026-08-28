@@ -2,7 +2,6 @@ package com.example.androidapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,19 +21,9 @@ public class CropMateActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(this);
 
-        // Customize primary button text if logged in
-        if (sessionManager.isLoggedIn()) {
-            String userName = sessionManager.getName();
-            if (userName != null && !userName.isEmpty()) {
-                binding.btnGetStarted.setText("CONTINUE AS " + userName.split(" ")[0].toUpperCase() + "  ➔");
-            } else {
-                binding.btnGetStarted.setText("CONTINUE TO DASHBOARD  ➔");
-            }
-            binding.btnCreateAccount.setVisibility(View.GONE);
-        } else {
-            binding.btnGetStarted.setText("GET STARTED / LOGIN  ➔");
-            binding.btnCreateAccount.setVisibility(View.VISIBLE);
-        }
+        // Keep 100% fixed text matching screenshot
+        binding.btnGetStarted.setText("GET STARTED / LOGIN  ➔");
+        binding.btnCreateAccount.setText("NEW TO CROPMATE? REGISTER FREE");
 
         // Card 1 Workflow: Rent Machinery (Seeker Discovery Flow)
         binding.cardRentMachinery.setOnClickListener(v -> {
@@ -73,7 +62,7 @@ public class CropMateActivity extends AppCompatActivity {
             }
         });
 
-        // Primary Action: Get Started / Login Click
+        // Primary Action: GET STARTED / LOGIN Click
         binding.btnGetStarted.setOnClickListener(v -> {
             if (sessionManager.isLoggedIn()) {
                 String role = sessionManager.getRole();
@@ -90,7 +79,7 @@ public class CropMateActivity extends AppCompatActivity {
             }
         });
 
-        // Secondary Action: Register Free Click
+        // Secondary Action: NEW TO CROPMATE? REGISTER FREE Click
         binding.btnCreateAccount.setOnClickListener(v -> {
             Intent intent = new Intent(CropMateActivity.this, SignupActivity.class);
             startActivity(intent);
