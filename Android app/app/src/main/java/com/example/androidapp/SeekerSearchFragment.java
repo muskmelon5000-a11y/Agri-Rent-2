@@ -120,6 +120,12 @@ public class SeekerSearchFragment extends Fragment {
         performSearch();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        performSearch();
+    }
+
     private void setupSpinners() {
         // Sort Spinner
         ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(

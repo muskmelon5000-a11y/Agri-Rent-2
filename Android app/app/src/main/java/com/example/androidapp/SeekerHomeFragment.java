@@ -134,6 +134,7 @@ public class SeekerHomeFragment extends Fragment {
         super.onResume();
         updateUserHeader();
         loadUserProfile();
+        applyCurrentFilters();
     }
 
     private void updateUserHeader() {

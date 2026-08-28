@@ -151,6 +151,7 @@ class EquipmentUpdate(BaseModel):
     brand: Optional[str] = None
     model: Optional[str] = None
     hp: Optional[int] = None
+    year: Optional[int] = None
     description: Optional[str] = None
     price_per_day: Optional[float] = None
     price_per_hour: Optional[float] = None
@@ -160,6 +161,7 @@ class EquipmentUpdate(BaseModel):
     district: Optional[str] = None
     is_available: Optional[bool] = None
     images: Optional[str] = None
+    attachments: Optional[str] = None
 
 
 class EquipmentOut(EquipmentBase):
