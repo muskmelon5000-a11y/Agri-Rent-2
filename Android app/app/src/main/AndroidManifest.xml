@@ -43,6 +43,9 @@
         <activity
             android:name=".MapSearchActivity"
             android:exported="false" />
+        <activity
+            android:name=".RequestDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

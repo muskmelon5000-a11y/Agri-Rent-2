@@ -75,6 +75,12 @@ public interface ApiService {
         @Header("Authorization") String token
     );
 
+    @GET("bookings/{booking_id}")
+    Call<Booking> getBookingDetails(
+        @Path("booking_id") String bookingId,
+        @Header("Authorization") String token
+    );
+
     @PATCH("bookings/{booking_id}/status")
     Call<Booking> updateBookingStatus(
         @Path("booking_id") String bookingId,

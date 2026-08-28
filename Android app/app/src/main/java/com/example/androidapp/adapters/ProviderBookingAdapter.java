@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidapp.databinding.ItemProviderBookingBinding;
 import com.example.androidapp.models.Booking;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ProviderBookingAdapter extends RecyclerView.Adapter<ProviderBooking
     public interface OnBookingActionListener {
         void onAccept(Booking booking);
         void onReject(Booking booking);
-        void onContactClick(Booking booking);
+        void onCardClick(Booking booking);
     }
 
     public ProviderBookingAdapter(OnBookingActionListener listener) {
@@ -59,51 +60,50 @@ public class ProviderBookingAdapter extends RecyclerView.Adapter<ProviderBooking
         }
 
         public void bind(final Booking item) {
-            binding.tvEquipmentName.setText(item.getEquipmentName() != null ? item.getEquipmentName() : "Equipment");
-            
-            String renter = "Renter: " + (item.getSeekerName() != null ? item.getSeekerName() : "Farmer");
-            if (item.getSeekerPhone() != null) {
-                renter += " (" + item.getSeekerPhone() + ")";
-            }
-            binding.tvRenterInfo.setText(renter);
-            
-            binding.tvDates.setText(item.getStartDate() + " - " + item.getEndDate());
-            binding.tvTotalDays.setText("Total: " + item.getTotalDays() + " days");
+            // Seeker Name & Initials
+            String seekerName = item.getSeekerName() != null && !item.getSeekerName().isEmpty() 
+                    ? item.getSeekerName() 
+                    : "Farmer";
+            binding.tvSeekerName.setText(seekerName);
+            binding.tvAvatarInitials.setText("👨‍🌾");
+
+            // Location
+            String loc = item.getEquipmentVillage() != null && !item.getEquipmentVillage().isEmpty()
+                    ? item.getEquipmentVillage()
+                    : (item.getDeliveryAddress() != null ? item.getDeliveryAddress() : "Nearby");
+            binding.tvLocationPin.setText("📍 " + loc);
+
+            // Machine Name
+            binding.tvEquipmentName.setText(item.getEquipmentName() != null ? item.getEquipmentName() : "Machinery");
+
+            // Dates & Total Days
+            String start = item.getStartDate() != null ? item.getStartDate() : "";
+            String end = item.getEndDate() != null ? item.getEndDate() : "";
+            binding.tvDatesRange.setText("📅 " + start + " - " + end + " (" + item.getTotalDays() + " Days)");
+
+            // Estimated Earnings
             binding.tvTotalAmount.setText("₹" + String.format("%,.0f", item.getTotalAmount()));
 
-            String status = item.getStatus() != null ? item.getStatus().toUpperCase() : "PENDING";
-            binding.tvStatus.setText(status);
-
-            // Hide actions if not pending
-            if ("PENDING".equals(status)) {
+            // Status Badge & Actions
+            String status = item.getStatus() != null ? item.getStatus().toLowerCase() : "pending";
+            if ("pending".equals(status)) {
+                binding.tvStatusBadge.setText("New Request");
+                binding.tvStatusBadge.setTextColor(Color.parseColor("#16A34A"));
+                binding.tvStatusBadge.setBackgroundColor(Color.parseColor("#DCFCE7"));
                 binding.layoutActions.setVisibility(View.VISIBLE);
+            } else if ("accepted".equals(status) || "active".equals(status)) {
+                binding.tvStatusBadge.setText(status.toUpperCase());
+                binding.tvStatusBadge.setTextColor(Color.parseColor("#2563EB"));
+                binding.tvStatusBadge.setBackgroundColor(Color.parseColor("#DBEAFE"));
+                binding.layoutActions.setVisibility(View.GONE);
             } else {
+                binding.tvStatusBadge.setText(status.toUpperCase());
+                binding.tvStatusBadge.setTextColor(Color.parseColor("#6B7280"));
+                binding.tvStatusBadge.setBackgroundColor(Color.parseColor("#F3F4F6"));
                 binding.layoutActions.setVisibility(View.GONE);
             }
 
-            // Set color badge dynamically
-            switch (status) {
-                case "ACCEPTED":
-                case "ACTIVE":
-                    binding.tvStatus.setTextColor(Color.parseColor("#1B5E20"));
-                    binding.tvStatus.getBackground().setTint(Color.parseColor("#E8F5E9"));
-                    break;
-                case "COMPLETED":
-                    binding.tvStatus.setTextColor(Color.parseColor("#0D47A1"));
-                    binding.tvStatus.getBackground().setTint(Color.parseColor("#E3F2FD"));
-                    break;
-                case "REJECTED":
-                case "CANCELLED":
-                    binding.tvStatus.setTextColor(Color.parseColor("#B71C1C"));
-                    binding.tvStatus.getBackground().setTint(Color.parseColor("#FFEBEE"));
-                    break;
-                case "PENDING":
-                default:
-                    binding.tvStatus.setTextColor(Color.parseColor("#E65100"));
-                    binding.tvStatus.getBackground().setTint(Color.parseColor("#FFF3E0"));
-                    break;
-            }
-
+            // Click Actions
             binding.btnAccept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -118,10 +118,10 @@ public class ProviderBookingAdapter extends RecyclerView.Adapter<ProviderBooking
                 }
             });
 
-            binding.btnContactRenter.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onContactClick(item);
+                    listener.onCardClick(item);
                 }
             });
         }
