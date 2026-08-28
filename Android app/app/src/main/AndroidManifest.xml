@@ -49,6 +49,9 @@
         <activity
             android:name=".CategoryListingActivity"
             android:exported="false" />
+        <activity
+            android:name=".EarningsReportActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

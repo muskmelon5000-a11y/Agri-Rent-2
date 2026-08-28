@@ -76,12 +76,10 @@ public class ProviderDashboardFragment extends Fragment {
             }
         });
 
-        // Details link on chart
-        binding.tvWeeklyDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(requireContext(), "📊 Weekly revenue breakdown active", Toast.LENGTH_SHORT).show();
-            }
+        // Details link on chart (opens EarningsReportActivity matching website)
+        binding.tvWeeklyDetails.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), EarningsReportActivity.class);
+            startActivity(intent);
         });
 
         // Notification Bell
