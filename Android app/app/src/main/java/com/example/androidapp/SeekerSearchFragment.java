@@ -176,7 +176,7 @@ public class SeekerSearchFragment extends Fragment {
         final String query = binding.etSearchQuery.getText().toString().trim();
         String selectedCategory = binding.spinnerSearchCategory.getSelectedItem() != null ?
                 binding.spinnerSearchCategory.getSelectedItem().toString() : "All Categories";
-        String category = "All Categories".equalsIgnoreCase(selectedCategory) ? null : selectedCategory;
+        String category = "All Categories".equalsIgnoreCase(selectedCategory) ? null : selectedCategory.toLowerCase();
 
         Double minPrice = null;
         String minPriceStr = binding.etFilterMinPrice.getText().toString().trim();

@@ -1,6 +1,7 @@
 package com.example.androidapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -49,83 +50,43 @@ public class SeekerHomeFragment extends Fragment {
 
         sessionManager = new SessionManager(requireContext());
         
-        // Dynamically populate user welcome and location
         updateUserHeader();
         loadUserProfile();
 
         setupRecyclerView();
-        loadNearbyEquipment(null, null, null, 20.0, null); // 20km radius default matching web
+        loadNearbyEquipment(null, null, null, 20.0, null);
 
-        binding.tvMapViewLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(requireContext(), MapSearchActivity.class);
-                startActivity(intent);
-            }
+        binding.tvMapViewLink.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), MapSearchActivity.class);
+            startActivity(intent);
         });
 
-        // Category Cards Clicks (matching website direct category filters)
-        binding.cardCatTractors.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterByCategory("Tractor");
-            }
+        // Category Cards Clicks
+        binding.cardCatTractors.setOnClickListener(v -> filterByCategory("tractor"));
+        binding.cardCatHarvesters.setOnClickListener(v -> filterByCategory("harvester"));
+        binding.cardCatImplements.setOnClickListener(v -> filterByCategory("implement"));
+        binding.cardCatDrones.setOnClickListener(v -> filterByCategory("drone"));
+
+        if (binding.cardCommunityHubs != null) {
+            binding.cardCommunityHubs.setOnClickListener(v -> 
+                Toast.makeText(requireContext(), "🏛️ 3 Community Equipment Hubs found within 10 km!", Toast.LENGTH_SHORT).show());
+        }
+
+        binding.btnToggleFilters.setOnClickListener(v -> {
+            int vis = binding.layoutFilters.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+            binding.layoutFilters.setVisibility(vis);
         });
 
-        binding.cardCatHarvesters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterByCategory("Harvester");
-            }
-        });
+        binding.btnApplyFilters.setOnClickListener(v -> applyCurrentFilters());
+        binding.btnResetFilters.setOnClickListener(v -> resetFilters());
 
-        binding.cardCatImplements.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterByCategory("Implement");
-            }
-        });
-
-        binding.cardCatDrones.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterByCategory("Drone");
-            }
-        });
-
-        binding.btnToggleFilters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int vis = binding.layoutFilters.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
-                binding.layoutFilters.setVisibility(vis);
-            }
-        });
-
-        binding.btnApplyFilters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        binding.etSearchQuery.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || 
+                (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 applyCurrentFilters();
+                return true;
             }
-        });
-
-        binding.btnResetFilters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resetFilters();
-            }
-        });
-
-        // Search Input Handling
-        binding.etSearchQuery.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH || 
-                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    applyCurrentFilters();
-                    return true;
-                }
-                return false;
-            }
+            return false;
         });
     }
 
@@ -177,15 +138,50 @@ public class SeekerHomeFragment extends Fragment {
         });
     }
 
-    private void filterByCategory(String category) {
-        if (category.equalsIgnoreCase(selectedCategory)) {
+    private void filterByCategory(String catKey) {
+        if (catKey != null && catKey.equalsIgnoreCase(selectedCategory)) {
             selectedCategory = null;
-            Toast.makeText(requireContext(), "Showing all categories", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Showing all machinery categories", Toast.LENGTH_SHORT).show();
         } else {
-            selectedCategory = category;
-            Toast.makeText(requireContext(), "Filtered: " + category, Toast.LENGTH_SHORT).show();
+            selectedCategory = catKey;
+            String displayTitle = catKey.substring(0, 1).toUpperCase() + catKey.substring(1) + "s";
+            Toast.makeText(requireContext(), "Filtered: " + displayTitle, Toast.LENGTH_SHORT).show();
         }
+        updateCategoryCardSelectionUI();
         applyCurrentFilters();
+    }
+
+    private void updateCategoryCardSelectionUI() {
+        if (binding == null) return;
+        int activeBorderColor = Color.parseColor("#2E7D32");
+        int activeBgColor = Color.parseColor("#F0FDF4");
+        int inactiveBgColor = Color.parseColor("#FFFFFF");
+
+        int strokePx = (int) (2 * getResources().getDisplayMetrics().density);
+
+        // Tractors Card
+        boolean isTractor = "tractor".equalsIgnoreCase(selectedCategory);
+        binding.cardCatTractors.setStrokeColor(activeBorderColor);
+        binding.cardCatTractors.setStrokeWidth(isTractor ? strokePx : 0);
+        binding.cardCatTractors.setCardBackgroundColor(isTractor ? activeBgColor : inactiveBgColor);
+
+        // Harvesters Card
+        boolean isHarvester = "harvester".equalsIgnoreCase(selectedCategory);
+        binding.cardCatHarvesters.setStrokeColor(activeBorderColor);
+        binding.cardCatHarvesters.setStrokeWidth(isHarvester ? strokePx : 0);
+        binding.cardCatHarvesters.setCardBackgroundColor(isHarvester ? activeBgColor : inactiveBgColor);
+
+        // Implements Card
+        boolean isImplement = "implement".equalsIgnoreCase(selectedCategory);
+        binding.cardCatImplements.setStrokeColor(activeBorderColor);
+        binding.cardCatImplements.setStrokeWidth(isImplement ? strokePx : 0);
+        binding.cardCatImplements.setCardBackgroundColor(isImplement ? activeBgColor : inactiveBgColor);
+
+        // Drones Card
+        boolean isDrone = "drone".equalsIgnoreCase(selectedCategory);
+        binding.cardCatDrones.setStrokeColor(activeBorderColor);
+        binding.cardCatDrones.setStrokeWidth(isDrone ? strokePx : 0);
+        binding.cardCatDrones.setCardBackgroundColor(isDrone ? activeBgColor : inactiveBgColor);
     }
 
     private void setupRecyclerView() {
@@ -231,6 +227,7 @@ public class SeekerHomeFragment extends Fragment {
         binding.etMaxPrice.setText("");
         binding.etRadius.setText("20");
         selectedCategory = null;
+        updateCategoryCardSelectionUI();
         loadNearbyEquipment(null, null, null, 20.0, null);
     }
 
@@ -240,7 +237,6 @@ public class SeekerHomeFragment extends Fragment {
 
         String authToken = "Bearer " + sessionManager.getToken();
         
-        // Location coordinates for Anandpur/Ahmedabad region matching web defaults
         double defaultLat = 23.0225;
         double defaultLng = 72.5714;
 
