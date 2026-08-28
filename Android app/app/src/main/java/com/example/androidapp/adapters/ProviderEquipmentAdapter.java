@@ -1,12 +1,17 @@
 package com.example.androidapp.adapters;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.androidapp.R;
 import com.example.androidapp.databinding.ItemProviderEquipmentBinding;
 import com.example.androidapp.models.Equipment;
 import java.util.ArrayList;
@@ -21,6 +26,7 @@ public class ProviderEquipmentAdapter extends RecyclerView.Adapter<ProviderEquip
         void onDeleteClick(Equipment equipment);
         void onEditClick(Equipment equipment);
         void onToggleAvailabilityClick(Equipment equipment);
+        void onViewJobsClick(Equipment equipment);
     }
 
     public ProviderEquipmentAdapter(OnEquipmentActionListener listener) {
@@ -60,9 +66,30 @@ public class ProviderEquipmentAdapter extends RecyclerView.Adapter<ProviderEquip
 
         public void bind(final Equipment item) {
             binding.tvName.setText(item.getName());
-            binding.tvBrandType.setText((item.getBrand() != null ? item.getBrand() : "") + " • " + (item.getType() != null ? item.getType() : ""));
-            binding.tvPrice.setText("₹" + String.format("%,.0f", item.getPricePerDay()) + "/day");
+            
+            String brand = item.getBrand() != null && !item.getBrand().isEmpty() ? item.getBrand() : "";
+            String type = item.getType() != null ? item.getType() : "machinery";
+            if (!brand.isEmpty()) {
+                binding.tvBrandType.setText(brand + " • " + type);
+            } else {
+                binding.tvBrandType.setText(type);
+            }
 
+            double monthEarnings = item.getPricePerDay() * (item.getTotalRentals() > 0 ? item.getTotalRentals() : 0);
+            binding.tvEarnings.setText("₹" + String.format("%,.0f", monthEarnings));
+
+            // Availability Status Text & Colors
+            if (item.isAvailable()) {
+                binding.tvAvailabilityStatus.setText("Available");
+                binding.tvAvailabilityStatus.setTextColor(Color.parseColor("#16A34A"));
+                binding.layoutRentedOutBanner.setVisibility(View.GONE);
+            } else {
+                binding.tvAvailabilityStatus.setText("Unavailable");
+                binding.tvAvailabilityStatus.setTextColor(Color.parseColor("#9CA3AF"));
+                binding.layoutRentedOutBanner.setVisibility(View.VISIBLE);
+            }
+
+            // Switch binding
             binding.switchAvailability.setOnCheckedChangeListener(null);
             binding.switchAvailability.setChecked(item.isAvailable());
             binding.switchAvailability.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -72,19 +99,51 @@ public class ProviderEquipmentAdapter extends RecyclerView.Adapter<ProviderEquip
                 }
             });
 
-            binding.btnEdit.setOnClickListener(new View.OnClickListener() {
+            // More Options Menu (⋮)
+            binding.btnMoreOptions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showPopupMenu(v, item);
+                }
+            });
+
+            // View Jobs link on unavailable banner
+            binding.tvViewJobs.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onViewJobsClick(item);
+                }
+            });
+
+            // Card Click opens Edit
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onEditClick(item);
                 }
             });
+        }
 
-            binding.btnDelete.setOnClickListener(new View.OnClickListener() {
+        private void showPopupMenu(View anchor, final Equipment item) {
+            Context context = anchor.getContext();
+            PopupMenu popup = new PopupMenu(context, anchor);
+            popup.getMenu().add(0, 1, 0, "✏️ Edit Equipment");
+            popup.getMenu().add(0, 2, 1, "🗑️ Delete Equipment");
+
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
-                public void onClick(View v) {
-                    listener.onDeleteClick(item);
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    if (menuItem.getItemId() == 1) {
+                        listener.onEditClick(item);
+                        return true;
+                    } else if (menuItem.getItemId() == 2) {
+                        listener.onDeleteClick(item);
+                        return true;
+                    }
+                    return false;
                 }
             });
+            popup.show();
         }
     }
 }

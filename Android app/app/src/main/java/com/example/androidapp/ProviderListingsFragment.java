@@ -77,6 +77,17 @@ public class ProviderListingsFragment extends Fragment {
             public void onToggleAvailabilityClick(Equipment equipment) {
                 toggleListingAvailability(equipment.getId());
             }
+
+            @Override
+            public void onViewJobsClick(Equipment equipment) {
+                if (getActivity() instanceof ProviderMainActivity) {
+                    com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
+                            getActivity().findViewById(R.id.bottom_navigation);
+                    if (bottomNav != null) {
+                        bottomNav.setSelectedItemId(R.id.nav_provider_bookings);
+                    }
+                }
+            }
         });
         binding.rvListings.setAdapter(adapter);
     }
