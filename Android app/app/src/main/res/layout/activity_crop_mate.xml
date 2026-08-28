@@ -1,286 +1,457 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:fillViewport="true"
+    android:background="#FDFBF7">
 
-    <!-- Background Curved Decor Circle -->
-    <View
-        android:layout_width="320dp"
-        android:layout_height="320dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-100dp"
-        android:background="#F0FDF4" />
-
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:paddingBottom="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="28dp"
-            android:gravity="center_horizontal">
+            android:orientation="vertical">
 
-            <!-- Hero Logo Icon Container -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="32dp"
-                app:cardCornerRadius="30dp"
-                app:cardElevation="4dp"
-                app:strokeColor="#C8E6C9"
-                app:strokeWidth="2dp"
-                app:cardBackgroundColor="#E8F5E9">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="🌾"
-                    android:textSize="54sp" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Brand Name: CropMate -->
-            <TextView
-                android:id="@+id/tvBrandName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CropMate"
-                android:textColor="#2E7D32"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:letterSpacing="-0.02"
-                android:layout_marginTop="16dp" />
-
-            <!-- Tagline -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Smart Farm Machinery &amp; Rental Platform"
-                android:textColor="#4B5563"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginTop="4dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Connect with nearby machinery owners, book tractors, harvesters &amp; drones in seconds."
-                android:textColor="#6B7280"
-                android:textSize="13sp"
-                android:textAlignment="center"
-                android:layout_marginTop="6dp"
-                android:paddingHorizontal="16dp"
-                android:lineSpacingExtra="3dp" />
-
-            <!-- Feature Cards Container -->
-            <LinearLayout
+            <!-- Top Hero Banner with Gradient & Header -->
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="24dp">
+                android:background="#FFF8F3"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="28dp"
+                android:paddingBottom="36dp">
 
-                <!-- Feature 1: Rent Machinery -->
-                <com.google.android.material.card.MaterialCardView
+                <!-- Top Brand Header: CropMate -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="1dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="#F3F4F6"
-                    app:cardBackgroundColor="#FAFAFA">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:id="@+id/headerBrand">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="14dp">
+                    <!-- Logo Badge -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="#FFF0E6">
 
                         <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:gravity="center"
-                            android:text="🚜"
-                            android:textSize="22sp"
-                            android:background="#DCFCE7" />
+                            android:text="🌾"
+                            android:textSize="26sp" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginStart="14dp">
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Rent Farm Machinery"
-                                android:textColor="#111827"
-                                android:textSize="14sp"
+                                android:text="Crop"
+                                android:textColor="#1F2937"
+                                android:textSize="26sp"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Book tractors, harvesters, implements &amp; spray drones nearby"
-                                android:textColor="#6B7280"
-                                android:textSize="11sp"
-                                android:layout_marginTop="2dp" />
+                                android:text="Mate"
+                                android:textColor="#FF6B00"
+                                android:textSize="26sp"
+                                android:textStyle="bold" />
                         </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
 
-                <!-- Feature 2: Provider Earnings -->
-                <com.google.android.material.card.MaterialCardView
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Smart Farm Machinery &amp; Rental Platform"
+                            android:textColor="#6B7280"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Hero Section: Rent Smart. Farm Better. + Tractor Graphic -->
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="1dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="#F3F4F6"
-                    app:cardBackgroundColor="#FAFAFA">
+                    android:layout_below="@id/headerBrand"
+                    android:layout_marginTop="28dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="14dp">
+                        android:orientation="vertical"
+                        android:layout_toStartOf="@id/cardHeroTractor"
+                        android:layout_marginEnd="8dp">
 
                         <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:gravity="center"
-                            android:text="💰"
-                            android:textSize="22sp"
-                            android:background="#FEF3C7" />
-
-                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginStart="14dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Earn as an Owner"
-                                android:textColor="#111827"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="List idle machinery, manage rental requests &amp; track payouts"
-                                android:textColor="#6B7280"
-                                android:textSize="11sp"
-                                android:layout_marginTop="2dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Feature 3: Verified Farmers -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="1dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="#F3F4F6"
-                    app:cardBackgroundColor="#FAFAFA">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="14dp">
+                            android:text="Rent Smart."
+                            android:textColor="#1F2937"
+                            android:textSize="30sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="-0.02" />
 
                         <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:gravity="center"
-                            android:text="👨‍🌾"
-                            android:textSize="22sp"
-                            android:background="#E0F2FE" />
-
-                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginStart="14dp">
+                            android:text="Farm Better."
+                            android:textColor="#FF6B00"
+                            android:textSize="30sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="-0.02" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Verified Community"
-                                android:textColor="#111827"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
+                        <!-- Small orange underline accent bar -->
+                        <View
+                            android:layout_width="40dp"
+                            android:layout_height="4dp"
+                            android:background="#FF6B00"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginBottom="10dp" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Direct phone calls, WhatsApp chat &amp; transparent ratings"
-                                android:textColor="#6B7280"
-                                android:textSize="11sp"
-                                android:layout_marginTop="2dp" />
-                        </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rent or list farm machinery in your area and grow more together."
+                            android:textColor="#4B5563"
+                            android:textSize="13sp"
+                            android:lineSpacingExtra="3dp" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
 
+                    <!-- Hero Tractor Illustration Badge -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardHeroTractor"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="#FFD8BE"
+                        app:strokeWidth="1.5dp"
+                        app:cardBackgroundColor="@android:color/white">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="#FFF5ED">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🚜"
+                                android:textSize="54sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <!-- Curved Bottom Divider Line -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_height="16dp"
+                android:background="#FFEDE0" />
 
-            <!-- Bottom Action Buttons -->
+            <!-- Main Content: 3 Cards & Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="16dp">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="20dp">
 
-                <!-- Get Started / Login Button -->
+                <!-- Card 1: Rent Machinery -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardRentMachinery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#FF6B00"
+                    app:strokeWidth="1.5dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/icRent"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp"
+                            app:cardBackgroundColor="#FFF0E6"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="🚜"
+                                android:textSize="26sp" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_toEndOf="@id/icRent"
+                            android:layout_toStartOf="@id/arrowRent"
+                            android:layout_marginStart="14dp"
+                            android:layout_centerVertical="true">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Rent Machinery"
+                                android:textColor="#1F2937"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Book tractors, harvesters, implements &amp; more in seconds."
+                                android:textColor="#6B7280"
+                                android:textSize="12sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/arrowRent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="❯"
+                            android:textColor="#FF6B00"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 2: List Your Machinery -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardListMachinery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#FF6B00"
+                    app:strokeWidth="1.5dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/icList"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp"
+                            app:cardBackgroundColor="#FFF0E6"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="👤"
+                                android:textSize="26sp" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_toEndOf="@id/icList"
+                            android:layout_toStartOf="@id/arrowList"
+                            android:layout_marginStart="14dp"
+                            android:layout_centerVertical="true">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="List Your Machinery"
+                                android:textColor="#1F2937"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="List idle machinery, manage rentals &amp; track your earnings."
+                                android:textColor="#6B7280"
+                                android:textSize="12sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/arrowList"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="❯"
+                            android:textColor="#FF6B00"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 3: Join Our Community -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardJoinCommunity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#FF6B00"
+                    app:strokeWidth="1.5dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/icCommunity"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp"
+                            app:cardBackgroundColor="#FFF0E6"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="🤝"
+                                android:textSize="26sp" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_toEndOf="@id/icCommunity"
+                            android:layout_toStartOf="@id/arrowCommunity"
+                            android:layout_marginStart="14dp"
+                            android:layout_centerVertical="true">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Join Our Community"
+                                android:textColor="#1F2937"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Connect directly with farmers near you and grow together."
+                                android:textColor="#6B7280"
+                                android:textSize="12sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/arrowCommunity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="❯"
+                            android:textColor="#FF6B00"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Primary Action Button: GET STARTED / LOGIN -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnGetStarted"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:text="Get Started / Login ➔"
+                    android:layout_height="54dp"
+                    android:text="GET STARTED / LOGIN  ➔"
+                    android:textColor="@android:color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:backgroundTint="#2E7D32"
-                    android:textColor="@android:color/white"
-                    app:cornerRadius="14dp"
-                    android:layout_marginBottom="10dp" />
+                    android:backgroundTint="#FF6B00"
+                    app:cornerRadius="16dp"
+                    android:layout_marginBottom="12dp" />
 
-                <!-- Create Account Button -->
+                <!-- Secondary Action Button: NEW TO CROPMATE? REGISTER FREE -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCreateAccount"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:text="New to CropMate? Register Free"
-                    android:textColor="#2E7D32"
-                    android:textSize="14sp"
+                    android:layout_height="54dp"
+                    android:text="NEW TO CROPMATE? REGISTER FREE"
+                    android:textColor="#FF6B00"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    app:strokeColor="#2E7D32"
+                    app:strokeColor="#FF6B00"
                     app:strokeWidth="1.5dp"
-                    app:cornerRadius="14dp" />
-            </LinearLayout>
+                    app:cornerRadius="16dp"
+                    android:layout_marginBottom="16dp" />
 
+                <!-- Wheat Landscape Footer -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="🌾 🏡 🌾 🌾 🏡 🌾"
+                    android:textColor="#FFD8BE"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>
