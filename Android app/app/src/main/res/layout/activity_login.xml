@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
-                android:text="AgriRent"
+                android:text="CropMate"
                 android:textColor="#2E7D32"
                 android:textSize="36sp"
                 android:textStyle="bold"
@@ -182,7 +182,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New to AgriRent? "
+                    android:text="New to CropMate? "
                     android:textColor="#757575"
                     android:textSize="14sp" />
 
