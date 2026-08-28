@@ -10,6 +10,15 @@
             padding: 0;
             height: 100%;
             width: 100%;
+            background: #FAFAFA;
+        }
+        .user-pulse-dot {
+            width: 16px;
+            height: 16px;
+            background-color: #2563EB;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
         }
     </style>
 </head>
@@ -18,15 +27,24 @@
     <script>
         var map = L.map('map', {
             zoomControl: false
-        }).setView([23.0225, 72.5714], 12); // Default Ahmedabad/Anandpur center
+        }).setView([23.0225, 72.5714], 13); // Center on location
 
-        // Base Layer
-        var baseLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-            maxZoom: 20,
-            attribution: '&copy; Google Maps'
-        }).addTo(map);
+        // Tile Layers (Streets, Hybrid Satellite, Terrain)
+        var tileLayers = {
+            streets: L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, attribution: '&copy; Google Maps' }),
+            hybrid: L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20, attribution: '&copy; Google Maps' }),
+            terrain: L.tileLayer('https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', { maxZoom: 20, attribution: '&copy; Google Maps' })
+        };
+        var currentLayer = tileLayers.streets.addTo(map);
 
-        // Custom Equipment Icon matching website green pin
+        function setMapLayer(layerName) {
+            if (tileLayers[layerName]) {
+                map.removeLayer(currentLayer);
+                currentLayer = tileLayers[layerName].addTo(map);
+            }
+        }
+
+        // Custom Equipment Pin
         var greenIcon = new L.Icon({
             iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
             shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -36,38 +54,53 @@
             shadowSize: [41, 41]
         });
 
-        // Search Location Circle
+        // Search Location Elements
         var searchCircle = null;
         var searchMarker = null;
+        var userPulseMarker = null;
 
         var markersGroup = L.layerGroup().addTo(map);
         var markersMap = {};
 
-        function centerMap(lat, lng) {
-            map.flyTo([lat, lng], 13);
+        function centerMap(lat, lng, zoomLevel) {
+            var zoom = zoomLevel || 14;
+            map.flyTo([lat, lng], zoom, { animate: true, duration: 1.2 });
             
             // Update search marker
             if (searchMarker) {
                 searchMarker.setLatLng([lat, lng]);
             } else {
-                searchMarker = L.marker([lat, lng]).addTo(map).bindPopup("📍 Search Center");
+                searchMarker = L.marker([lat, lng]).addTo(map).bindPopup("📍 Search Location");
             }
 
-            // Update search circle
+            // Update search radius circle (20km)
             if (searchCircle) {
                 searchCircle.setLatLng([lat, lng]);
             } else {
                 searchCircle = L.circle([lat, lng], {
-                    radius: 20000, // 20km
+                    radius: 20000,
                     color: '#059669',
                     fillColor: '#10B981',
-                    fillOpacity: 0.15,
+                    fillOpacity: 0.12,
                     weight: 2
                 }).addTo(map);
             }
         }
 
-        // JavaScript interface function called from Android
+        function setUserLocation(lat, lng) {
+            var userIcon = L.divIcon({
+                className: 'user-pulse-dot',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+            if (userPulseMarker) {
+                userPulseMarker.setLatLng([lat, lng]);
+            } else {
+                userPulseMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map).bindPopup("📍 My Real GPS Location");
+            }
+            centerMap(lat, lng, 15);
+        }
+
         function setMarkers(equipmentJson) {
             markersGroup.clearLayers();
             markersMap = {};
@@ -79,7 +112,6 @@
                         .bindPopup("<b>" + eq.name + "</b><br>₹" + eq.price_per_day + "/day");
                     
                     marker.on('click', function() {
-                        // Notify Android about marker selection
                         if (window.AndroidBridge) {
                             window.AndroidBridge.onMarkerSelected(eq.id);
                         }
@@ -99,7 +131,6 @@
             }
         }
 
-        // Send map move events to Android to trigger "Search this area"
         map.on('moveend', function() {
             var center = map.getCenter();
             if (window.AndroidBridge) {
