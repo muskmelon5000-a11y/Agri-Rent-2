@@ -7,25 +7,43 @@
     android:layout_height="match_parent"
     android:background="#FAFAFA">
 
-    <!-- Clean Top App Bar -->
-    <RelativeLayout
+    <!-- Warm Provider Header Matching Dashboard Theme -->
+    <LinearLayout
         android:id="@+id/layoutAppBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@android:color/white"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#B45309"
         android:paddingHorizontal="20dp"
-        android:elevation="2dp">
+        android:paddingTop="20dp"
+        android:paddingBottom="24dp">
 
         <TextView
-            android:id="@+id/tvListingsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Equipment"
-            android:textColor="#111827"
-            android:textSize="18sp"
+            android:text="EQUIPMENT MANAGEMENT"
+            android:textColor="#FDE68A"
+            android:textSize="12sp"
             android:textStyle="bold"
-            android:layout_centerVertical="true" />
-    </RelativeLayout>
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="2dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvListingsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Equipment Fleet"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+    </LinearLayout>
 
     <!-- Main Content Recycler -->
     <androidx.recyclerview.widget.RecyclerView
@@ -71,7 +89,7 @@
             android:layout_marginTop="8dp" />
     </LinearLayout>
 
-    <!-- Add Machine FAB (Green matching Website) -->
+    <!-- Add Machine FAB (Terracotta matching Provider theme) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddMachine"
         android:layout_width="wrap_content"
@@ -79,7 +97,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
-        android:backgroundTint="#2E7D32"
+        android:backgroundTint="#B45309"
         android:src="@android:drawable/ic_input_add"
         app:tint="@android:color/white"
         app:elevation="6dp"

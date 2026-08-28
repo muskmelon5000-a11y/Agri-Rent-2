@@ -146,6 +146,9 @@ public class ProfileFragment extends Fragment {
             binding.tvCurrentRoleTitle.setText("Current Role");
             binding.tvRoleContext.setText("You are browsing as a Provider");
             binding.btnSwitchRole.setText("Switch to Seeker");
+            binding.btnSwitchRole.setTextColor(Color.parseColor("#B45309"));
+            binding.btnSwitchRole.setStrokeColor(android.content.res.ColorStateList.valueOf(Color.parseColor("#FDE68A")));
+            binding.cardRoleSwitcher.setCardBackgroundColor(Color.parseColor("#FEF3C7"));
             binding.tvPointsLabel.setText("Machinery Points");
             loadProviderStats();
         } else {
@@ -153,6 +156,9 @@ public class ProfileFragment extends Fragment {
             binding.tvCurrentRoleTitle.setText("Current Role");
             binding.tvRoleContext.setText("You are browsing as a Seeker");
             binding.btnSwitchRole.setText("Switch to Provider");
+            binding.btnSwitchRole.setTextColor(Color.parseColor("#2E7D32"));
+            binding.btnSwitchRole.setStrokeColor(android.content.res.ColorStateList.valueOf(Color.parseColor("#C8E6C9")));
+            binding.cardRoleSwitcher.setCardBackgroundColor(Color.parseColor("#E8F5E9"));
             binding.tvPointsLabel.setText("Skill Points");
         }
     }
