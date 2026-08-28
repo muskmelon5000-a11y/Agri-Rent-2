@@ -2,6 +2,7 @@ package com.example.androidapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,30 +17,41 @@ public class CropMateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        sessionManager = new SessionManager(this);
-
-        // Auto-navigate if already logged in
-        if (sessionManager.isLoggedIn()) {
-            String role = sessionManager.getRole();
-            Intent intent;
-            if ("provider".equalsIgnoreCase(role)) {
-                intent = new Intent(this, ProviderMainActivity.class);
-            } else {
-                intent = new Intent(this, SeekerMainActivity.class);
-            }
-            startActivity(intent);
-            finish();
-            return;
-        }
-
         binding = ActivityCropMateBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        sessionManager = new SessionManager(this);
+
+        // Customize button text if already logged in
+        if (sessionManager.isLoggedIn()) {
+            String userName = sessionManager.getName();
+            if (userName != null && !userName.isEmpty()) {
+                binding.btnGetStarted.setText("Continue as " + userName.split(" ")[0] + " ➔");
+            } else {
+                binding.btnGetStarted.setText("Continue to Dashboard ➔");
+            }
+            binding.btnCreateAccount.setVisibility(View.GONE);
+        } else {
+            binding.btnGetStarted.setText("Get Started / Login ➔");
+            binding.btnCreateAccount.setVisibility(View.VISIBLE);
+        }
+
         // Get Started / Login Click
         binding.btnGetStarted.setOnClickListener(v -> {
-            Intent intent = new Intent(CropMateActivity.this, LoginActivity.class);
-            startActivity(intent);
+            if (sessionManager.isLoggedIn()) {
+                String role = sessionManager.getRole();
+                Intent intent;
+                if ("provider".equalsIgnoreCase(role)) {
+                    intent = new Intent(CropMateActivity.this, ProviderMainActivity.class);
+                } else {
+                    intent = new Intent(CropMateActivity.this, SeekerMainActivity.class);
+                }
+                startActivity(intent);
+                finish();
+            } else {
+                Intent intent = new Intent(CropMateActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
         });
 
         // Register Free Click
