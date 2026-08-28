@@ -46,6 +46,9 @@
         <activity
             android:name=".RequestDetailActivity"
             android:exported="false" />
+        <activity
+            android:name=".CategoryListingActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

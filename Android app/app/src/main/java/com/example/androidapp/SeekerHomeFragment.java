@@ -61,11 +61,11 @@ public class SeekerHomeFragment extends Fragment {
             startActivity(intent);
         });
 
-        // Category Cards Clicks
-        binding.cardCatTractors.setOnClickListener(v -> filterByCategory("tractor"));
-        binding.cardCatHarvesters.setOnClickListener(v -> filterByCategory("harvester"));
-        binding.cardCatImplements.setOnClickListener(v -> filterByCategory("implement"));
-        binding.cardCatDrones.setOnClickListener(v -> filterByCategory("drone"));
+        // Category Cards Clicks (launching CategoryListingActivity matching website)
+        binding.cardCatTractors.setOnClickListener(v -> openCategoryListing("tractor"));
+        binding.cardCatHarvesters.setOnClickListener(v -> openCategoryListing("harvester"));
+        binding.cardCatImplements.setOnClickListener(v -> openCategoryListing("implement"));
+        binding.cardCatDrones.setOnClickListener(v -> openCategoryListing("drone"));
 
         if (binding.cardCommunityHubs != null) {
             binding.cardCommunityHubs.setOnClickListener(v -> 
@@ -136,6 +136,12 @@ public class SeekerHomeFragment extends Fragment {
             @Override
             public void onFailure(Call<UserOut> call, Throwable t) {}
         });
+    }
+
+    private void openCategoryListing(String catKey) {
+        Intent intent = new Intent(requireContext(), CategoryListingActivity.class);
+        intent.putExtra("category", catKey);
+        startActivity(intent);
     }
 
     private void filterByCategory(String catKey) {
