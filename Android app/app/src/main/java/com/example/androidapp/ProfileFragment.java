@@ -142,6 +142,11 @@ public class ProfileFragment extends Fragment {
         boolean isProvider = "provider".equalsIgnoreCase(role);
 
         if (isProvider) {
+            binding.layoutProfileHeaderContainer.setBackgroundColor(Color.parseColor("#B45309"));
+            binding.tvProfileSubtitle.setText("PROVIDER PROFILE & ACCOUNT");
+            binding.tvProfileSubtitle.setTextColor(Color.parseColor("#FDE68A"));
+            binding.btnEditProfilePencil.setCardBackgroundColor(Color.parseColor("#B45309"));
+
             binding.layoutProviderSection.setVisibility(View.VISIBLE);
             binding.tvCurrentRoleTitle.setText("Current Role");
             binding.tvRoleContext.setText("You are browsing as a Provider");
@@ -152,6 +157,11 @@ public class ProfileFragment extends Fragment {
             binding.tvPointsLabel.setText("Machinery Points");
             loadProviderStats();
         } else {
+            binding.layoutProfileHeaderContainer.setBackgroundColor(Color.parseColor("#2E7D32"));
+            binding.tvProfileSubtitle.setText("FARMER PROFILE & ACCOUNT");
+            binding.tvProfileSubtitle.setTextColor(Color.parseColor("#C8E6C9"));
+            binding.btnEditProfilePencil.setCardBackgroundColor(Color.parseColor("#2E7D32"));
+
             binding.layoutProviderSection.setVisibility(View.GONE);
             binding.tvCurrentRoleTitle.setText("Current Role");
             binding.tvRoleContext.setText("You are browsing as a Seeker");
